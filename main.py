@@ -1,168 +1,274 @@
-
 import numpy as np
 import matplotlib.pyplot as plt
-from matplotlib.ticker import MaxNLocator
 
-# Define the functions
-def f_logistic(K, res_0, r, x):
-    return (K) / (1 + ((K - res_0)) / (res_0) * np.exp(-r * x))
+# Production Parameters 
+k1 = 0.1
+k2 = 0.2
+k3 = 0.15
+k4 = 0.25
+k5 = 0.2
+k6 = 0.3
+k7 = 0.1
+k8 = 0.01
+k9 = 0.23
+k10 = 0.1
+k11 = 0.33
 
-def f_powlaw(a, b, x):
-    return a * x**b
-
-def f_hill(V_m, n, x, K):
-    return (V_m * x**n) / (K**n + x**n)
-
-def f_michmenten(vmax, km, x):
-    return (vmax * x) / (km + x)
-
-# Define the system of differential equations
-def system(y, t, params):
-    M2, F, M, C, MC, IL8, TGFbeta1, VEGF, alphaSMA = y
-    kappa_M2, mu_M2, kappa_TGFbeta1M2, mu_TGFbeta1, kappa_IL8MC, mu_IL8, kappa_VEGFM2, kappa_VEGFMC, mu_VEGF, lambda_MCIL8, mu_MC, kappa_FTGFbeta1, sigma_FIL8, sigma_FM2, lambda_FMC, rho_FM, mu_CF, mu_M, kappa_alphaSMA, rho_FM_alphaSMA, mu_alphaSMA, kappa_CF, kappa_CM, lambda_alphaSMAkappa_CM, mu_C = params
-    
-    dM2dt = (kappa_M2 - mu_M2) * M2
-    dFdt = (kappa_TGFbeta1M2 * TGFbeta1 + (sigma_FIL8 * IL8 + sigma_FM2 * M2) * lambda_FMC * MC) - (rho_FM + mu_CF) * F
-    dMdt = rho_FM * F - mu_M * M
-    dCdt = kappa_CF * F + kappa_CM * M + lambda_alphaSMAkappa_CM * alphaSMA - mu_C * C
-    dMCdt = lambda_MCIL8 * IL8 - mu_MC * MC
-    dIL8dt = kappa_IL8MC * MC - mu_IL8 * IL8
-    dTGFbeta1dt = kappa_IL8MC * IL8 - mu_MC * TGFbeta1
-    dVEGFdt = kappa_VEGFM2 * M2 + kappa_VEGFMC * MC - mu_VEGF * VEGF
-    dalphaSMAdt = ((kappa_alphaSMA / rho_FM) - mu_alphaSMA) * alphaSMA
-    
-    return [dM2dt, dFdt, dMdt, dCdt, dMCdt, dIL8dt, dTGFbeta1dt, dVEGFdt, dalphaSMAdt]
-
-# Initial conditions
-M2_0 = 1000
-F_0 = 250
-M_0 = 100
-C_0 = 20
-MC_0 = 40
-IL8_0 = 10**-8
-TGFbeta1_0 = 10**-7
-VEGF_0 = 10**-9
-alphaSMA_0 = 1
-
-# Production/Secretion
-kappa_M2 = 0.2
-kappa_TGFbeta1M2 = 0.3
-kappa_IL8MC = 0.3
-kappa_VEGFM2 = 0.2
-kappa_VEGFMC = 0.1
-kappa_FTGFbeta1 = 0.3
-kappa_alphaSMA = 0.3
-kappa_CF = 0.5
-kappa_CM = 0.2
-# Activation
-lambda_MCIL8 = 0.2
-lambda_FMC = 0.1
-lambda_alphaSMAkappa_CM = 0.5
-# Inhibition
-sigma_FIL8 = 0.3
-sigma_FM2 = 0.6
-# Transition
-rho_FM = 0.1
-rho_FM_alphaSMA = 0.3
-# Decay
-mu_M2 = 0.3
-mu_TGFbeta1 = 0.5
-mu_IL8 = 0.5
-mu_VEGF = 0.2
-mu_MC = 0.3
-mu_CF = 0.1
-mu_M = 0.2
-mu_alphaSMA = 0.1
-mu_C = 0.3
+# Conversion parameters
+gamma1 = 0.05
+gamma2 = 0.06
+gamma3 = 0.04
+gamma4 = 0.03
+gamma5 = 0.02
+gamma6 = 0.01
+gamma8 = 0.06
+zeta1 = 0.02
+zeta2 = 0.03
+zeta3 = 0.01
+zeta4 = 0.04
+zeta5 = 0.02
 
 
-# Parameters
-params = [kappa_M2, mu_M2, kappa_TGFbeta1M2, 
-        mu_TGFbeta1, kappa_IL8MC, 
-        mu_IL8, kappa_VEGFM2, kappa_VEGFMC, 
-        mu_VEGF, lambda_MCIL8, mu_MC,
-         kappa_FTGFbeta1, sigma_FIL8, 
-         sigma_FM2, lambda_FMC, rho_FM,
-          mu_CF, mu_M, kappa_alphaSMA, 
-          rho_FM_alphaSMA, mu_alphaSMA, 
-          kappa_CF, kappa_CM, 
-          lambda_alphaSMAkappa_CM, mu_C]
+# Activation parameters
+lambda1 = 0.06
+lambda2 = 0.07
+lambda3 = 0.08
+lambda4 = 0.03
 
-# Time span and time step
-days = 12 * 30 
-time_step = 1 * 30   # day time step
-num_steps = int(days / time_step)
-t = np.linspace(0, days, num_steps + 1)
+# Transition parameters
+rho1 = 0.05
+rho2 = 0.02
+rho3 = 0.01
+
+# Decay parameters
+mu1 = 0.01
+mu2 = 0.05
+mu3 = 0.03
+mu4 = 0.01
+mu5 = 0.04
+mu6 = 0.04
+mu6 = 0.03
+mu7 = 0.01
+mu8 = 0.015
+
+# sinusoidal parameters
+upsilon1 = 0.02
+upsilon2 = 0.03
+upsilon3 = 0.01
+upsilon4 = 0.02
+omega1 = 0.5
+omega2 = 0.7
+omega3 = 0.6
 
 # Initial conditions
-initial_conditions = [M2_0, F_0, M_0, C_0, MC_0, IL8_0, TGFbeta1_0, VEGF_0, alphaSMA_0]
+A_MII0 = 1000
+I0 = 10**(-7)
+beta0 = 10**(-8)
+A_MC0 = 100
+A_F0 = 100
+A_M0 = 20
+A_Malpha0 = 0
+CIII0 = 0
+CI0 = 0
 
-# Euler method to solve ODEs stepwise
-results = np.zeros((len(initial_conditions), num_steps + 1))
-results[:, 0] = initial_conditions
+# Time parameters
+t_max = 7  # Maximum simulation time(weeks)
+n_days_in_week = 7
+dt = t_max/n_days_in_week   # Time step
 
-for i in range(num_steps):
-    dydt = system(results[:, i], t[i], params)
-    results[:, i + 1] = results[:, i] + np.array(dydt) * time_step
+# Forward Euler method
+timesteps = int(t_max / dt)
+time = np.linspace(0, t_max, timesteps)
 
-# Plot the results
-plt.figure(figsize=(12, 10))
+# Scenario 1 equations
+def scenario1_equations(A_MII, I, beta, A_MC, A_F, A_M, A_Malpha, CIII, CI, t):
+    A_MII_next = A_MII + k1 * np.exp(-mu1 * t)
+    I_next = I + dt * (-k2 * upsilon1 * np.exp(-upsilon1 * t) + k6 * gamma1 * A_MC - mu2 * I)
+    beta_next = beta + dt * (k3 * upsilon2 * np.exp(upsilon2 * t) + k4 * gamma2 * A_MII + k5 * gamma3 * A_MC - mu3 * beta)
+    A_MC_next = A_MC + dt * (A_MC * I * lambda3 * zeta1 - mu7 * A_MC)
+    A_F_next = A_F + dt * (lambda2 * zeta2 * I * A_F - lambda1 * zeta3 * beta * A_F - rho1 * A_F - mu5 * A_F)
+    A_M_next = A_M + dt * (rho1 * A_F + lambda1 * zeta4 * beta * A_F + lambda4 * zeta5 * A_F * A_M - mu6 * A_M)
+    A_Malpha_next = A_Malpha + dt * (rho2 * A_M)
+    CIII_next = CIII + dt * (k7 * gamma1 * A_F + k10 * gamma1 * A_M - mu7 * CIII)
+    CI_next = CI + dt * (k11 * gamma1 * A_Malpha - mu8 * CI)
+    return A_MII_next, I_next, beta_next, A_MC_next, A_F_next, A_M_next, A_Malpha_next, CIII_next, CI_next
 
-# Plot cells
-plt.subplot(3, 1, 1)
+# Scenario 2 equations
+def scenario2_equations(A_MII, I, beta, A_MC, A_F, A_M, A_Malpha, CIII, CI, t):
+    A_MII_next = A_MII + dt * (k1 * np.exp(-mu1 * t) * np.cos(omega1 * t))
+    I_next = I + dt * (-k2 * upsilon3 * np.exp(-upsilon3 * t) * np.cos(omega2 * t)
+                       - k2 * np.exp(-upsilon3 * t) * omega2 * np.sin(omega2 * t) + k6 * gamma1 * A_MC - mu2 * I)
+    beta_next = beta + dt * (k3 * np.exp(-upsilon4 * t) * omega3 * np.cos(omega3 * t)
+                             - k3 * upsilon4 * np.exp(-upsilon4 * t) * np.sin(omega3 * t)
+                             + k4 * gamma2 * A_MII + k5 * gamma3 * A_MC - mu3 * beta)
+    A_MC_next = A_MC + dt * (A_MC * I * lambda3 * zeta1 - mu7 * A_MC)
+    A_F_next = A_F + dt * (lambda2 * zeta2 * I * A_F - lambda1 * zeta3 * beta * A_F - rho1 * A_F - mu5 * A_F)
+    A_M_next = A_M + dt * (rho1 * A_F + lambda1 * zeta4 * beta * A_F + lambda4 * zeta5 * A_F * A_M - mu6 * A_M)
+    A_Malpha_next = A_Malpha + dt * (rho2 * A_M)
+    CIII_next = CIII + dt * (k7 * gamma1 * A_F + k10 * gamma1 * A_M - mu7 * CIII)
+    CI_next = CI + dt * (k11 * gamma1 * A_Malpha - mu8 * CI)
+    return A_MII_next, I_next, beta_next, A_MC_next, A_F_next, A_M_next, A_Malpha_next, CIII_next, CI_next
 
+# Initialize arrays for results
+A_MII1 = [A_MII0]
+I1 = [I0]
+beta1 = [beta0]
+A_MC1 = [A_MC0]
+A_F1 = [A_F0]
+A_M1 = [A_M0]
+A_Malpha1 = [A_Malpha0]
+CIII1 = [CIII0]
+CI1 = [CI0]
 
+A_MII2 = [A_MII0]
+I2 = [I0]
+beta2 = [beta0]
+A_MC2 = [A_MC0]
+A_F2 = [A_F0]
+A_M2 = [A_M0]
+A_Malpha2 = [A_Malpha0]
+CIII2 = [CIII0]
+CI2 = [CI0]
 
-plt.plot(t / (1 * 30), results[0], label='M2 Macrophages')
-plt.plot(t / (1 * 30), results[1], label='Fibroblasts')
-plt.plot(t / (1 * 30), results[2], label='Myofibroblasts')
-plt.plot(t / (1 * 30), results[4], label='Mast Cells')
-plt.xlabel('Time (Months)')
-plt.ylabel('Cell Count')
+# Perform simulation for both scenarios using forward Euler method
+for i in range(1, timesteps + 1):
+    t = i * dt
+    
+    # Scenario 1
+    A_MII_next, I_next, beta_next, A_MC_next, A_F_next, A_M_next, A_Malpha_next, CIII_next, CI_next = \
+        scenario1_equations(A_MII1[-1], I1[-1], beta1[-1], A_MC1[-1], A_F1[-1], A_M1[-1], A_Malpha1[-1], CIII1[-1], CI1[-1], t)
+    A_MII1.append(A_MII_next)
+    I1.append(I_next)
+    beta1.append(beta_next)
+    A_MC1.append(A_MC_next)
+    A_F1.append(A_F_next)
+    A_M1.append(A_M_next)
+    A_Malpha1.append(A_Malpha_next)
+    CIII1.append(CIII_next)
+    CI1.append(CI_next)
+    
+    # Scenario 2
+    A_MII_next, I_next, beta_next, A_MC_next, A_F_next, A_M_next, A_Malpha_next, CIII_next, CI_next = \
+        scenario2_equations(A_MII2[-1], I2[-1], beta2[-1], A_MC2[-1], A_F2[-1], A_M2[-1], A_Malpha2[-1], CIII2[-1], CI2[-1], t)
+    A_MII2.append(A_MII_next)
+    I2.append(I_next)
+    beta2.append(beta_next)
+    A_MC2.append(A_MC_next)
+    A_F2.append(A_F_next)
+    A_M2.append(A_M_next)
+    A_Malpha2.append(A_Malpha_next)
+    CIII2.append(CIII_next)
+    CI2.append(CI_next)
+
+# Plotting concentrations of cytokines, proteins, and cell counts for agents separately for each scenario
+plt.figure(figsize=(15, 12))
+
+# Scenario 1
+plt.subplot(3, 3, 1)
+plt.plot(time, I1[1:], label=r'$IL-8$(Scenario 1)')
 plt.legend()
-plt.title('Cell Dynamics')
-plt.gca().xaxis.set_major_locator(MaxNLocator(integer=True))  # Display integer ticks for months
-plt.xticks(range(0, 13))  # Set x-ticks from 0 to 12 months
-
-
-
-# plt.plot(t, results[0], label='M2 Macrophages')
-# plt.plot(t, results[1], label='Fibroblasts')
-# plt.plot(t, results[2], label='Myofibroblasts')
-# plt.plot(t, results[4], label='Mast Cells')
-# plt.xlabel('Time (days)')
-# plt.ylabel('Cell Count')
-# plt.legend()
-# plt.title('Cell Dynamics')
-# plt.gca().xaxis.set_major_locator(MaxNLocator(integer=True))  # Display integer ticks for days
-# plt.xticks(range(0, 30))  # Set x-ticks from 0 to 30 days
-# plt.xlim(0, 30)
-# plt.yscale('log')
-
-# Plot cytokines/proteins
-plt.subplot(3, 1, 2)
-plt.plot(t / (1 * 30), results[6], label='TGFbeta1')
-plt.plot(t / (1 * 30), results[5], label='IL8')
-plt.plot(t / (1 * 30), results[7], label='VEGF')
-plt.plot(t / (1 * 30), results[3], label='Collagen')
-plt.xlabel('Time (Months)')
+plt.title('IL-8 concentration over time')
+plt.xlabel('Time')
 plt.ylabel('Concentration')
-plt.legend()
-plt.title('Cytokine/Protein Dynamics')
-plt.gca().xaxis.set_major_locator(MaxNLocator(integer=True))  # Display integer ticks for months
-plt.xticks(range(0, 13))  # Set x-ticks from 0 to 12 months
-plt.yscale('log')
 
-# Plot alphaSMA
-plt.subplot(3, 1, 3)
-plt.plot(t / (1 * 30), results[8], label='alphaSMA')
-plt.xlabel('Time (Months)')
-plt.ylabel('Concentration')
+plt.subplot(3, 3, 2)
+plt.plot(time, beta1[1:], label=r'$TGF-\beta1$(Scenario 1)')
 plt.legend()
-plt.title('alphaSMA Dynamics')
-plt.gca().xaxis.set_major_locator(MaxNLocator(integer=True))  # Display integer ticks for months
-plt.xticks(range(0, 13))  # Set x-ticks from 0 to 12 months
-plt.yscale('log')
+plt.title(r'TGF-$\beta1$ concentration over time')
+plt.xlabel('Time')
+plt.ylabel('Concentration')
+
+plt.subplot(3, 3, 3)
+plt.plot(time, CI1[1:], label=r'$C_I$(Scenario 1)')
+plt.legend()
+plt.title(r'$C_I$ concentration over time')
+plt.xlabel('Time')
+plt.ylabel('Concentration')
+
+plt.subplot(3, 3, 4)
+plt.plot(time, A_MII1[1:], label=r'$A_{MII}$(Scenario 1)')
+plt.legend()
+plt.title(r'$A_{MII}$ cell count over time')
+plt.xlabel('Time')
+plt.ylabel('Count')
+
+plt.subplot(3, 3, 5)
+plt.plot(time, A_MC1[1:], label=r'$A_{MC}$(Scenario 1)')
+plt.legend()
+plt.title(r'$A_{MC}$ cell count over time')
+plt.xlabel('Time')
+plt.ylabel('Count')
+
+plt.subplot(3, 3, 6)
+plt.plot(time, A_M1[1:], label=r'$A_M$(Scenario 1)')
+plt.legend()
+plt.title(r'$A_M$ cell count over time')
+plt.xlabel('Time')
+plt.ylabel('Count')
+
+plt.subplot(3, 3, 7)
+plt.plot(time, A_Malpha1[1:], label=r'$A_{M\alpha}$(Scenario 1)')
+plt.legend()
+plt.title(r'$A_M\alpha$ cell count over time')
+plt.xlabel('Time')
+plt.ylabel('Count')
+
+plt.subplot(3, 3, 8)
+plt.plot(time, CIII1[1:], label=r'$C_{III}(Scenario 1)$')
+plt.legend()
+plt.title(r'$C_{III}$ concentration over time ')
+plt.xlabel('Time')
+plt.ylabel('Concentration')
+
+
+# Scenario 2
+plt.subplot(3, 3, 1)
+plt.plot(time, I2[1:], label=r'$IL-8$(Scenario 2)')
+plt.legend()
+plt.xlabel('Time')
+plt.ylabel('Concentration')
+
+plt.subplot(3, 3, 2)
+plt.plot(time, beta2[1:], label=r'$TGF-\beta1$(Scenario 2)')
+plt.legend()
+plt.xlabel('Time')
+plt.ylabel('Concentration')
+
+plt.subplot(3, 3, 3)
+plt.plot(time, CI2[1:], label=r'$C_{I}$(Scenario 2)')
+plt.legend()
+plt.xlabel('Time')
+plt.ylabel('Concentration')
+
+plt.subplot(3, 3, 4)
+plt.plot(time, A_MII2[1:], label=r'$A_{MII}$(Scenario 2)')
+plt.legend()
+plt.xlabel('Time')
+plt.ylabel('Count')
+
+plt.subplot(3, 3, 5)
+plt.plot(time, A_MC2[1:], label=r'$A_{MC}$(Scenario 2)')
+plt.legend()
+plt.xlabel('Time')
+plt.ylabel('Count')
+
+plt.subplot(3, 3, 6)
+plt.plot(time, A_M2[1:], label=r'$A_M$(Scenario 2)')
+plt.legend()
+plt.xlabel('Time')
+plt.ylabel('Count')
+
+plt.subplot(3, 3, 7)
+plt.plot(time, A_Malpha2[1:], label=r'$A_{M\alpha}$(Scenario 2)')
+plt.legend()
+plt.xlabel('Time')
+plt.ylabel('Count')
+
+plt.subplot(3, 3, 8)
+plt.plot(time, CIII2[1:], label=r'$C_{III}$(Scenario 2)')
+plt.legend()
+plt.xlabel('Time')
+plt.ylabel('Concentration')
+
 plt.tight_layout()
 plt.show()
-
