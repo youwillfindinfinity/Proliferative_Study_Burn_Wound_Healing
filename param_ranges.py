@@ -1,0 +1,72 @@
+import numpy as np
+
+
+n_values = 10
+ranges_for_production = [0.001, 5]
+ranges_for_upsi = [0.001, 0.1]
+ranges_for_omega = [0, 2 * np.pi]
+ranges_for_gamma = [1.0 * 10**-7, 1.0 * 10**-5]
+ranges_for_zeta = [1.0 * 10**-7, 1.0 * 10**-1]
+ranges_for_mu = [0.0001, 1]
+ranges_for_lambdas = ranges_for_mu
+ranges_for_rhos = ranges_for_mu
+
+# Define parameter ranges for sensitivity analysis
+parameter_ranges = {
+  'k1': np.linspace(*ranges_for_production, num = n_values),
+  'k2': np.linspace(*ranges_for_production, num = n_values),
+  'k3': np.linspace(*ranges_for_production, num = n_values),
+  'k4': np.linspace(*ranges_for_production, num = n_values),
+  'k5': np.linspace(*ranges_for_production, num = n_values),
+  'k6': np.linspace(*ranges_for_production, num = n_values),
+  'k7': np.linspace(*ranges_for_production, num = n_values),
+  'k8': np.linspace(*ranges_for_production, num = n_values),
+  'k9': np.linspace(*ranges_for_production, num = n_values),
+  'k10': np.linspace(*ranges_for_production, num = n_values),
+  'k11': np.linspace(*ranges_for_production, num = n_values),
+  'upsilon1': np.linspace(*ranges_for_upsi, num = n_values),
+  'upsilon2': np.linspace(*ranges_for_upsi, num = n_values),
+  'upsilon3': np.linspace(*ranges_for_upsi, num = n_values),
+  'upsilon4': np.linspace(*ranges_for_upsi, num = n_values),
+  'omega1': np.linspace(*ranges_for_omega, num = n_values),
+  'omega2': np.linspace(*ranges_for_omega, num = n_values),
+  'omega3': np.linspace(*ranges_for_omega, num = n_values),
+  'gamma1': np.linspace(*ranges_for_gamma, num = n_values),
+  'gamma2': np.linspace(*ranges_for_gamma, num = n_values),
+  'gamma3': np.linspace(*ranges_for_gamma, num = n_values),
+  'gamma4': np.linspace(*ranges_for_gamma, num = n_values),
+  'gamma5': np.linspace(*ranges_for_gamma, num = n_values),
+  'gamma6': np.linspace(*ranges_for_gamma, num = n_values),
+  'gamma7': np.linspace(*ranges_for_gamma, num = n_values),
+  'gamma8': np.linspace(*ranges_for_gamma, num = n_values),
+  'zeta1': np.linspace(*ranges_for_zeta, num = n_values),
+  'zeta2': np.linspace(*ranges_for_zeta, num = n_values),
+  'zeta3': np.linspace(*ranges_for_zeta, num = n_values),
+  'zeta4': np.linspace(*ranges_for_zeta, num = n_values),
+  'zeta5': np.linspace(*ranges_for_zeta, num = n_values),
+  'lambda1': np.linspace(*ranges_for_lambdas, num = n_values),
+  'lambda2': np.linspace(*ranges_for_lambdas, num = n_values),
+  'lambda3': np.linspace(*ranges_for_lambdas, num = n_values),
+  'lambda4': np.linspace(*ranges_for_lambdas, num = n_values),
+  'rho1': np.linspace(*ranges_for_rhos, num = n_values),
+  'rho2': np.linspace(*ranges_for_rhos, num = n_values),
+  'rho3': np.linspace(*ranges_for_rhos, num = n_values),
+  'mu1': np.linspace(*ranges_for_mu, num = n_values),
+  'mu2': np.linspace(*ranges_for_mu, num = n_values),
+  'mu3': np.linspace(*ranges_for_mu, num = n_values),
+  'mu4': np.linspace(*ranges_for_mu, num = n_values),
+  'mu5': np.linspace(*ranges_for_mu, num = n_values),
+  'mu6': np.linspace(*ranges_for_mu, num = n_values),
+  'mu7': np.linspace(*ranges_for_mu, num = n_values),
+  'mu8': np.linspace(*ranges_for_mu, num = n_values),
+  'A_MII0': np.linspace(1000, 3000, num = n_values),
+  'I0': np.linspace(10**-9, 10**-6, num = n_values),
+  'beta0': np.linspace(10**-9, 10**-6, num = n_values),
+  'A_MC0': np.linspace(0, 500, num = n_values),
+  'A_F0': np.linspace(0, 500, num = n_values),
+  'A_M0': np.linspace(0, 200, num = n_values),
+  'A_Malpha0':np.linspace(0, 0.000001, num = n_values),
+   'CI0':np.linspace(0, 0.000001, num = n_values),
+   'CIII0':np.linspace(0, 0.000001, num = n_values),
+  'f_dillution':np.linspace(1/16, 1/15, num = n_values)
+}
