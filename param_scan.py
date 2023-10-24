@@ -1,6 +1,6 @@
 import numpy as np
 from scipy.optimize import curve_fit
-
+import matplotlib.pyplot as plt
 # Load parameter ranges and initial parameters
 from param_ranges import parameter_ranges  # Assuming this file contains parameter_ranges dictionary
 from params import defined_params, initial_parameters
@@ -221,6 +221,25 @@ time_weeks = np.array([2 * n_days_in_week, 7 * n_days_in_week, 10 * n_days_in_we
 
 # Call the function to get cell dynamics lists
 cell_dynamics = cell_dynamics_curve(time, 1000, 600, 1000, time_weeks)
-initial_parameters = initial_parameters()
+# initial_parameters = initial_parameters()
 # Perform gradient descent optimization
-optimized_parameters = gradient_descent(observed_data=cell_dynamics, initial_parameters = initial_parameters,parameter_ranges=parameter_ranges, learning_rate=0.01, iterations=1000, scenario_nr="1")
+# optimized_parameters = gradient_descent(observed_data=cell_dynamics, initial_parameters = initial_parameters,parameter_ranges=parameter_ranges, learning_rate=0.01, iterations=1000, scenario_nr="1")
+
+# Plot the cell dynamics
+plt.figure(figsize=(8, 6))
+
+# Plot Mast Cells dynamics
+plt.plot(time, cell_dynamics[1], label='Mast Cells')
+
+# Plot Fibroblasts dynamics
+plt.plot(time, cell_dynamics[2], label='Fibroblasts')
+
+# Plot MII Macrophages dynamics
+plt.plot(time, cell_dynamics[0], label='MII Macrophages')
+
+plt.xlabel('Time')
+plt.ylabel('Cell Quantity')
+plt.title('Cell Dynamics Over Time')
+plt.legend()
+plt.grid(True)
+plt.show()

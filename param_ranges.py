@@ -28,22 +28,6 @@ parameter_ranges = {
   'upsilon2': np.linspace(*ranges_for_upsi, num = n_values),
   'upsilon3': np.linspace(*ranges_for_upsi, num = n_values),
   'upsilon4': np.linspace(*ranges_for_upsi, num = n_values),
-  'omega1': np.linspace(*ranges_for_omega, num = n_values),
-  'omega2': np.linspace(*ranges_for_omega, num = n_values),
-  'omega3': np.linspace(*ranges_for_omega, num = n_values),
-  'gamma1': np.linspace(*ranges_for_gamma, num = n_values),
-  'gamma2': np.linspace(*ranges_for_gamma, num = n_values),
-  'gamma3': np.linspace(*ranges_for_gamma, num = n_values),
-  'gamma4': np.linspace(*ranges_for_gamma, num = n_values),
-  'gamma5': np.linspace(*ranges_for_gamma, num = n_values),
-  'gamma6': np.linspace(*ranges_for_gamma, num = n_values),
-  'gamma7': np.linspace(*ranges_for_gamma, num = n_values),
-  'gamma8': np.linspace(*ranges_for_gamma, num = n_values),
-  'zeta1': np.linspace(*ranges_for_zeta, num = n_values),
-  'zeta2': np.linspace(*ranges_for_zeta, num = n_values),
-  'zeta3': np.linspace(*ranges_for_zeta, num = n_values),
-  'zeta4': np.linspace(*ranges_for_zeta, num = n_values),
-  'zeta5': np.linspace(*ranges_for_zeta, num = n_values),
   'lambda1': np.linspace(*ranges_for_lambdas, num = n_values),
   'lambda2': np.linspace(*ranges_for_lambdas, num = n_values),
   'lambda3': np.linspace(*ranges_for_lambdas, num = n_values),
@@ -67,6 +51,58 @@ parameter_ranges = {
   'A_M0': np.linspace(0, 200, num = n_values),
   'A_Malpha0':np.linspace(0, 0.000001, num = n_values),
    'CI0':np.linspace(0, 0.000001, num = n_values),
-   'CIII0':np.linspace(0, 0.000001, num = n_values),
-  'f_dillution':np.linspace(1/16, 1/15, num = n_values)
+   'CIII0':np.linspace(0, 0.000001, num = n_values)
+}
+
+
+ranges_for_production = (0.001, 5)
+ranges_for_upsi = (0.001, 0.1)
+ranges_for_omega = (0, 2 * np.pi)
+ranges_for_gamma = (1.0 * 10**-7, 1.0 * 10**-5)
+ranges_for_zeta = (1.0 * 10**-7, 1.0 * 10**-1)
+ranges_for_mu = (0.0001, 1)
+ranges_for_lambdas = ranges_for_mu
+ranges_for_rhos = ranges_for_mu
+
+# Define parameter ranges for sensitivity analysis
+p_ranges = {
+  'k1': ranges_for_production,
+  'k2': ranges_for_production,
+  'k3': ranges_for_production,
+  'k4': ranges_for_production,
+  'k5': ranges_for_production,
+  'k6': ranges_for_production,
+  'k7': ranges_for_production,
+  'k8': ranges_for_production,
+  'k9': ranges_for_production,
+  'k10': ranges_for_production,
+  'k11': ranges_for_production,
+  'upsilon1': (-1, 0),
+  'upsilon2': (-1, 1),
+  'upsilon3': ranges_for_upsi,
+  'upsilon4': ranges_for_upsi,
+  'lambda1': ranges_for_lambdas,
+  'lambda2': ranges_for_lambdas,
+  'lambda3': ranges_for_lambdas,
+  'lambda4': ranges_for_lambdas,
+  'rho1': ranges_for_rhos,
+  'rho2': ranges_for_rhos,
+  'rho3': ranges_for_rhos,
+  'mu1': ranges_for_mu,
+  'mu2': ranges_for_mu,
+  'mu3': ranges_for_mu,
+  'mu4': ranges_for_mu,
+  'mu5': ranges_for_mu,
+  'mu6': ranges_for_mu,
+  'mu7': ranges_for_mu,
+  'mu8': ranges_for_mu,
+  'A_MII0': (1000, 3000),
+  'I0': (10**-9, 10**-6),
+  'beta0': (10**-9, 10**-6),
+  'A_MC0': (0, 500),
+  'A_F0': (0, 500),
+  'A_M0': (0, 200),
+  'A_Malpha0':(0, 0.000001),
+   'CI0':(0, 0.000001),
+   'CIII0':(0, 0.000001)
 }
