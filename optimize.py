@@ -8,11 +8,17 @@ import matplotlib.pyplot as plt
 
 
 
-def run_simulation(parameters):
+def run_simulation(params):
     # print(parameters)
-    k3, k5, k6, k9, k10, lambda2, lambda3, lambda4, rho2, rho3, mu3, \
-    mu4, mu6, upsilon1, upsilon2, upsilon3, upsilon4, omega1, omega2, \
-    omega3, A_MII0, I0, beta0, A_MC0, A_F0, A_M0 = parameters
+    # k3, k5, k6, k9, k10, lambda2, lambda3, lambda4, rho2, rho3, mu3, \
+    # mu4, mu6, upsilon1, upsilon2, upsilon3, upsilon4, omega1, omega2, \
+    # omega3, A_MII0, I0, beta0, A_MC0, A_F0, A_M0 = parameters
+
+    k1, k2, k3, k4, k5, k6, k7, k8, k9, k10, k11, \
+    gamma, zeta, f_dillution, lambda1, lambda2, lambda3, lambda4, \
+    rho1, rho2, rho3, mu1, mu2, mu3, mu4, mu5, mu6, mu7, mu8, \
+    upsilon1, upsilon2, upsilon3, upsilon4, omega1, omega2, omega3, \
+    A_MII0, I0, beta0, A_MC0, A_F0, A_M0, A_Malpha0, CIII0, CI0 = params
  
     day_conversion = 24 * 60
     
@@ -128,11 +134,17 @@ def fit_quadratic_curves(data, A0, time_weeks):
 
 def cell_dynamics_curve(time, parameters):
     # values = list(parameters.values())
+    if callable(parameters):
+        temploc = parameters().values()
+    elif isinstance(parameters, np.ndarray):
+        temploc = parameters
+    else:
+        temploc = parameters.values()
     k1, k2, k3, k4, k5, k6, k7, k8, k9, k10, k11,\
     gamma, zeta, f_dillution, lambda1, lambda2, lambda3, lambda4,\
     rho1, rho2, rho3, mu1, mu2, mu3, mu4, mu5, mu6, mu7, mu8,\
     upsilon1, upsilon2, upsilon3, upsilon4, omega1, omega2, omega3,\
-    A_MII0, I0, beta0, A_MC0, A_F0, A_M0, A_Malpha0, CIII0, CI0 = parameters_dict.values()
+    A_MII0, I0, beta0, A_MC0, A_F0, A_M0, A_Malpha0, CIII0, CI0 = temploc
 
     # Quantities for each cell type
     A_MC = np.array([1.0, 0.8, 0.6, 0.3])  # Mast Cells data points
@@ -161,11 +173,10 @@ def cost_function(parameters, *args):
     
     target_time, target_A_MII, target_A_MC, target_A_F = args
     A_MII, A_MC, A_F = run_simulation(parameters)
-    fitted_A_MII, fitted_A_MC, fitted_A_F = cell_dynamics_curve(target_time, defined_params)
-    
-    rmse_A_MII = np.sqrt(np.mean((fitted_A_MII - A_MII) ** 2))
-    rmse_A_MC = np.sqrt(np.mean((fitted_A_MC - A_MC) ** 2))
-    rmse_A_F = np.sqrt(np.mean((fitted_A_F - A_F) ** 2))
+    fitted_A_MII, fitted_A_MC, fitted_A_F = cell_dynamics_curve(target_time, parameters)
+    rmse_A_MII = np.sqrt(np.mean((fitted_A_MII - A_MII[:-1]) ** 2))
+    rmse_A_MC = np.sqrt(np.mean((fitted_A_MC - A_MC[:-1]) ** 2))
+    rmse_A_F = np.sqrt(np.mean((fitted_A_F - A_F[:-1]) ** 2))
     
     rmse = rmse_A_MII + rmse_A_MC + rmse_A_F  # Combined RMSE for all cell types
     return rmse
@@ -190,18 +201,18 @@ target_A_MII, target_A_MC, target_A_F = cell_dynamics_curve(time, params)
 
 # Optimize the parameters
 result_list = []  # To store the best 10 results
-
+everchanaging_params = params.copy()
 for _ in range(100):  # Perform optimization 10 times and store the best results
     # Get initial parameter values
-    initial_params = params.copy()
+
     # Exclude parameters specified in def_params from optimization
     for param in def_params.keys():
-            del initial_params[param]
+            everchanaging_params[param] = def_params[param]
     # print(rest)
     # Define parameter bounds using the ranges from parameter_ranges dictionary
     bounds = []
 
-    for param in initial_params.keys():
+    for param in everchanaging_params.keys():
         if param in p_ranges:
             # If the parameter is in parameter_ranges, use the specified range
             param_min, param_max = float(p_ranges[param][0]), float(p_ranges[param][1])
@@ -219,12 +230,12 @@ for _ in range(100):  # Perform optimization 10 times and store the best results
     
     # Perform optimization
     # print(initial_params.keys())
-    result = minimize(cost_function, list(initial_params.values()), args=(time, target_A_MII, target_A_MC, target_A_F),
+    result = minimize(cost_function, list(everchanaging_params.values()), args=(time, target_A_MII, target_A_MC, target_A_F),
                   bounds=bounds)
     
     # Reconstruct the full parameter dictionary including parameters from def_params
     optimized_params = params.copy()
-    for i, param in enumerate(initial_params.keys()):
+    for i, param in enumerate(everchanaging_params.keys()):
         optimized_params[param] = result.x[i]
     
     # Store the result
