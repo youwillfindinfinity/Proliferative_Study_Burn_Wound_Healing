@@ -1,6 +1,7 @@
 from params import initial_parameters
 from param_ranges import parameter_ranges
 from main import A_MII1_func,A_MII2_func,A_Malpha_func, scenario1_equations, scenario2_equations
+from scipy.interpolate import griddata
 import numpy as np
 import matplotlib.pyplot as plt
 import json
@@ -77,6 +78,9 @@ import json
 # sensitivity_results = {'x_values': [], 'y_values': [], 'sensitivity_metrics': {'A_F1':[], 
 # 'A_M1':[], 'CIII1':[], 'CI1':[], 'A_F2':[], 'A_M2':[], 'CIII2':[], 'CI2':[]}}
 
+# # Counter for JSON file names
+# json_file_counter = 1
+
 # # Perform sensitivity analysis for each parameter
 # for param_x, param_values_x in parameter_ranges.items():
 #     for param_y, param_values_y in parameter_ranges.items():
@@ -88,7 +92,7 @@ import json
 #                 initial_parameters[param_x] = value_x
 #                 initial_parameters[param_y] = value_y
 #                 # Run simulation function with updated parameters and get the sensitivity metric
-#                 sensitivity_metric = run_simulation(initial_parameters)  # Modify this line based on your simulation function
+#                 sensitivity_metric = run_simulation(initial_parameters) 
 #                 # Store the results in the dictionary
 #                 sensitivity_results['x_values'].append(value_x)
 #                 sensitivity_results['y_values'].append(value_y)
@@ -101,71 +105,72 @@ import json
 #                 sensitivity_results['sensitivity_metrics']['CIII2'].append(sensitivity_metric[6])
 #                 sensitivity_results['sensitivity_metrics']['CI2'].append(sensitivity_metric[7])
 
+#                 # Save the sensitivity results to a new JSON file
+#                 with open(f'sensitivity_results/sensitivity_results{json_file_counter}.json', 'w') as json_file:
+#                     json.dump(sensitivity_results, json_file)
+
+#                 # Increment the JSON file counter
+#                 json_file_counter += 1
+
 #         # Reset the parameters to their initial values for the next iteration
 #         initial_parameters[param_x] = initial_value_x
 #         initial_parameters[param_y] = initial_value_y
 
-# # Save the sensitivity results to a JSON file
-# with open('sensitivity_results1.json', 'w') as json_file:
-#     json.dump(sensitivity_results, json_file)
 
 # print("Sensitivity results have been saved to 'sensitivity_results.json'.")
+import json
+import matplotlib.pyplot as plt
 
-# Load sensitivity analysis results from the JSON file
-with open('sensitivity_results.json', 'r') as json_file:
+# Load sensitivity results from the JSON file
+with open('sensitivity_results/sensitivity_results1675.json', 'r') as json_file:
     sensitivity_results = json.load(json_file)
 
-# List of sensitivity metrics to plot
-sensitivity_metrics_list = ['A_F1', 'A_M1', 'CIII1', 'CI1', 'A_F2', 'A_M2', 'CIII2', 'CI2']
+# Extract data from sensitivity results
+x_values = sensitivity_results['x_values']
+y_values = sensitivity_results['y_values']
+# A_F1 = sensitivity_results['sensitivity_metrics']['A_F1'][:len(x_values)]
+# List of keys from the dictionary
+keys = list(sensitivity_results['sensitivity_metrics'].keys())
 
-# Number of rows and columns for subplots
-num_rows = 2
-num_cols = 4
+# Create a figure with 8 subplots arranged in 2 rows and 4 columns
+plt.figure(figsize=(16, 8))
 
-# Create subplots
-fig, axes = plt.subplots(num_rows, num_cols, figsize=(16, 8))
+for idx, key in enumerate(keys):
+    # Trim the data to match the length of x_values
+    data = sensitivity_results['sensitivity_metrics'][key][:len(x_values)]
 
-# Flatten and plot each sensitivity metric
-for i, metric in enumerate(sensitivity_metrics_list):
-    row = i // num_cols
-    col = i % num_cols
-    
-    # Extract and flatten the sensitivity metric data
-    sensitivity_metric_flat = np.ravel(sensitivity_results['sensitivity_metrics'][metric])
-    
-    # Plot the contour plot for the current metric
-    contour = axes[row, col].tricontourf(sensitivity_results['x_values'], sensitivity_results['y_values'], sensitivity_metric_flat, levels=20, cmap='viridis')
-    axes[row, col].set_xlabel('Parameter X Values')
-    axes[row, col].set_ylabel('Parameter Y Values')
-    axes[row, col].set_title(metric)
-    fig.colorbar(contour, ax=axes[row, col], label='Sensitivity Metric')
+    # Create the meshgrid
+    xi, yi = np.meshgrid(x_values, y_values)
 
-    # Save the individual figure for the current metric
-    individual_fig_name = f'{metric}_sensitivity_plot.png'
-    plt.savefig(individual_fig_name)
-    print(f"Saved: {individual_fig_name}")
+    # Convert data to a NumPy array and flatten it
+    data_array = np.array(data)
+    flat_data = data_array.ravel()
 
-# Adjust layout and display the plots
+    # Construct flattened x_values and y_values
+    flat_x_values = np.tile(np.linspace(min(x_values), max(x_values), data_array.shape[1]), data_array.shape[0])
+    flat_y_values = np.repeat(np.linspace(min(y_values), max(y_values), data_array.shape[0]), data_array.shape[1])
+
+    # Reshape the data to match the grid shape
+    data_reshaped = griddata((flat_x_values, flat_y_values), flat_data, (xi, yi), method='cubic')
+
+    # Fill NaN and Inf values with 0
+    data_filled = np.nan_to_num(data_reshaped, nan=0.0001, posinf=0.0001, neginf=0.0001)
+    data_filled[data_filled == 0] = 0.001
+
+
+    # Plot the contour plot in the corresponding subplot
+    plt.subplot(2, 4, idx + 1)
+    plt.contourf(xi, yi, data_filled, levels=20, cmap='viridis')
+    plt.colorbar(label=key)
+    plt.xlabel('Parameters within range')
+    plt.ylabel('Parameters within range')
+    plt.title(f'Contour Plot of {key}')
+
+# Adjust layout
 plt.tight_layout()
+
+# Save the figure as an image file (e.g., PNG, PDF, etc.)
+plt.savefig('contour_plots.png')  # You can change the file format and file name as needed
+
+# Show the plot (optional, depending on your use case)
 plt.show()
-
-# Save the joint figure
-joint_fig_name = 'joint_sensitivity_plots.png'
-plt.savefig(joint_fig_name)
-print(f"Saved: {joint_fig_name}")
-
-# # Time parameters
-# weeks = 30
-# n_days_in_week = 7
-# t_max =  weeks * n_days_in_week # Maximum simulation time(weeks)
-# dt = weeks/t_max # Time step
-
-# # Forward Euler method
-# parameters = initial_parameters()
-# timesteps = int(t_max / dt)
-# time = np.linspace(0, t_max, timesteps)
-# sim = run_simulation(parameters)
-# print(sim[0])
-# plt.plot(time, a)
-# plt.plot(time, b)
-# plt.show()

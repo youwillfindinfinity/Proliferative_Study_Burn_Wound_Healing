@@ -204,7 +204,7 @@ result_list = []  # To store the best 10 results
 everchanaging_params = params.copy()
 for _ in range(100):  # Perform optimization 10 times and store the best results
     # Get initial parameter values
-
+s
     # Exclude parameters specified in def_params from optimization
     for param in def_params.keys():
             everchanaging_params[param] = def_params[param]
@@ -254,4 +254,3 @@ with open('best_results.json', 'w') as json_file:
     json.dump(result_list, json_file)
 
 print('Optimization complete. Best results saved to best_results.json.')
-

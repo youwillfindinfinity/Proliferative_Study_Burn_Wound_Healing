@@ -101,14 +101,14 @@ def initial_parameters():
     }
 	return parameters
 
-# Time parameters
-weeks = 30
-n_days_in_week = 7
-t_max =  weeks * n_days_in_week # Maximum simulation time(weeks)
-dt = weeks/t_max # Time step
+# # Time parameters
+# weeks = 30
+# n_days_in_week = 7
+# t_max =  weeks * n_days_in_week # Maximum simulation time(weeks)
+# dt = weeks/t_max # Time step
 
-# Forward Euler method
-timesteps = int(t_max / dt)
-time = np.linspace(0, t_max, timesteps)
+# # Forward Euler method
+# timesteps = int(t_max / dt)
+# time = np.linspace(0, t_max, timesteps)
 
 
