@@ -155,6 +155,8 @@ cython_debug/
 /sensitivity_results
 /timeseriesanalysis
 /plots
+
+
 parameter_results_1.json
 correlation_matrix_1.json
 parameter_results_2.json
