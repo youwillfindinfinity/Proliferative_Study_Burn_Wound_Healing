@@ -23,32 +23,8 @@ def A_Malpha_func(rho2, A_M, A_Malpha0, t):
 
 
 
-# k1, k2, k3, k4, k5, k6, k7, k8, k9, k10, k11, \
-# gamma, zeta, f_dillution, lambda1, lambda2, lambda3,\
-# lambda4, rho1, rho2, rho3, mu1, mu2, mu3, mu4, mu5, \
-# mu6, mu7, mu8, upsilon1, upsilon2, upsilon3, upsilon4, \
-# omega1, omega2, omega3, A_MII0, I0, beta0, A_MC0, A_F0, \
-# A_M0, A_Malpha0, CIII0, CI0 = 1.439119910008026, 3.3728020021867753, 1.4399999155221739, 4.023532898817432, 1.44, 1.44, 5.0, 5.0, 1.44, 1.44, 1.44, 0.0, -0.04162089475089391, 0.07462911254921226, 0.09999949313304642, 0.14399780357653444, 0.143973473962762, 0.14400000000000002, 0.21711248482614182, 0.14400000000000002, 0.14400000000000002, 0.1479723163153072, 1.0000016895565214, 0.14400000000000002, 0.007131564248382544, 0.061275680627146015, 0.14400000000000002, 0.14400000000000002, 0.14400000000000002, 0.14400000000000002, 1000.0, 1e-06, 1e-06, 0.5002137730367664, 0.6932530570060584, 0.6096239485272107, 1e-06, 1e-06, 4.886424078097683e-11, 5.63958642747979, 5.738349200502124, 6.283185307179586, 1e-05, 1e-05, 0.0625
 
 
-
-#1.439119910008026, 3.3728020021867753, 1.4399999155221739, 4.023532898817432, 1.44, 1.44, 5.0, 5.0, 1.44, 1.44, 1.44, 0.0, -0.04162089475089391, 0.07462911254921226, 0.09999949313304642, 0.14399780357653444, 0.143973473962762, 0.14400000000000002, 0.21711248482614182, 0.14400000000000002, 0.14400000000000002, 0.1479723163153072, 1.0000016895565214, 0.14400000000000002, 0.007131564248382544, 0.061275680627146015, 0.14400000000000002, 0.14400000000000002, 0.14400000000000002, 0.14400000000000002, 1000.0, 1e-06, 1e-06, 0.5002137730367664, 0.6932530570060584, 0.6096239485272107, 1e-06, 1e-06, 4.886424078097683e-11, 5.63958642747979, 5.738349200502124, 6.283185307179586, 1e-05, 1e-05, 0.0625
-
-# # Initial conditions
-# A_MII0 = 1000
-# I0 = 10**(-9) #
-# beta0 = 10**(-7) #
-# A_MC0 = 1000
-# A_F0 = 600
-# A_M0 = 50
-# A_Malpha0 = 0
-# CIII0 = 0
-# CI0 = 0
-# lambda1, lambda2, k1, mu1, omega1, lambda3, lambda4, mu5, rho1, k2, mu2, k7, k8, rho3, k10 = 25, 25, 10000, 0.1, 0.007, 5, 0.10, 0.000001, 0.01, 0.01, 1, 10, 10, 1, 1
-
-
-
-# FIX SCN 2 IL8
 dt = 1/(60*24)
 dt_hour = 1/60
 # Production Parameters 
@@ -57,7 +33,7 @@ k2 = 2.34 * 10**(-5) * dt # day combi model ****
 k3 = 1 * 10**(-5) * dt
 k4 = 2.80 * 10**(-5) * dt # day combi model *****
 k5 = 0.00001 * dt
-k6 = 0.00006 * dt
+k6 = 0.0003 * dt
 k7 = 1 * dt # k1 and k2 between 30-60 https://zero.sci-hub.se/3771/b68709ea5f5640da4199e36ff25ef036/cumming2009.pdf
 k8 = 1 * dt # dayhttps://link.springer.com/article/10.1007/s11538-012-9751-z/tables/1
 k9 = 50 * 10**(-5) * dt 
@@ -71,7 +47,7 @@ f_dillution = 1/16
 
 # Activation parameters
 lambda1 = 0.001 * dt_hour # https://www.sciencedirect.com/science/article/pii/S0045782516302857?casa_token=ByHEzHgojSEAAAAA:XNdfPARqEPtiO3rcqb0jo9d--utWdu-swPxNKOLyK5huphzY4TcRxiVo4c4yzCASMY-tOswVpzY#br000435
-lambda2 = 100 * dt # fixed
+lambda2 = 1 * dt # fixed
 lambda3 = 50 * dt
 lambda4 = 5 * dt
 
@@ -94,11 +70,11 @@ mu8 = 9.7 * 10**(-5) * dt # https://www.sciencedirect.com/science/article/pii/S0
 # sinusoidal parameters
 upsilon1 = -0.001#-0.001 # negative value
 upsilon2 = -1
-upsilon3 = 0.0001
+upsilon3 = 0.01
 upsilon4 = 0.001
 omega1 =   1/2 * np.pi * dt
-omega2 =  0.2 * np.pi 
-omega3 =  0.1 * np.pi 
+omega2 =   80* np.pi *dt
+omega3 =  60*np.pi *dt
 
 # Initial conditions
 A_MII0 = 1000
@@ -220,17 +196,17 @@ for i in range(1, timesteps + 1):
     CI2.append(CI_next)
     
 
-# plt.plot(time, np.array(beta1[1:])/10**(4), label = "beta")
-# plt.plot(time, np.array(I1[1:])/10**(9), label="I")
-plt.plot(time, np.array(beta2[1:]), label = "beta")
-plt.plot(time, np.array(I2[1:]), label="I")
-# plt.plot(time, A_MC1[1:], label="A_MC")
-# plt.plot(time, A_F1[1:])
-# plt.plot(time, np.asarray(A_M1[1:]))
-# plt.yscale('log')
-# plt.plot(time, A_Malpha1[1:])
-plt.legend()
-plt.show()
+# # plt.plot(time, np.array(beta1[1:])/10**(4), label = "beta")
+# # plt.plot(time, np.array(I1[1:])/10**(9), label="I")
+# plt.plot(time, np.array(beta2[1:]), label = "beta")
+# plt.plot(time, np.array(I2[1:]), label="I")
+# # plt.plot(time, A_MC1[1:], label="A_MC")
+# # plt.plot(time, A_F1[1:])
+# # plt.plot(time, np.asarray(A_M1[1:]))
+# # plt.yscale('log')
+# # plt.plot(time, A_Malpha1[1:])
+# plt.legend()
+# plt.show()
 
 # # Time parameters
 # weeks = 30
@@ -315,12 +291,13 @@ def plots_fe(scenario_nr):
         plt.xlabel('Time')
         plt.ylabel('Count')
 
+
         plt.subplot(3, 3, 7)
-        plt.plot(time, CI1[1:], label=r'$C_I$(Scenario 1)')
+        plt.plot(time, A_Malpha1[1:], label=r'$A_{M\alpha}$(Scenario 1)')
         plt.legend()
-        plt.title(r'$C_I$ concentration over time')
+        plt.title(r'$A_{M\alpha}$ cell count over time')
         plt.xlabel('Time')
-        plt.ylabel('Concentration')
+        plt.ylabel('Count')
 
         plt.subplot(3, 3, 8)
         plt.plot(time, CIII1[1:], label=r'$C_{III}(Scenario 1)$')
@@ -329,12 +306,17 @@ def plots_fe(scenario_nr):
         plt.xlabel('Time')
         plt.ylabel('Concentration')
 
+
         plt.subplot(3, 3, 9)
-        plt.plot(time, A_Malpha1[1:], label=r'$A_{M\alpha}$(Scenario 1)')
+        plt.plot(time, CI1[1:], label=r'$C_I$(Scenario 1)')
         plt.legend()
-        plt.title(r'$A_{M\alpha}$ cell count over time')
+        plt.title(r'$C_I$ concentration over time')
         plt.xlabel('Time')
-        plt.ylabel('Count')
+        plt.ylabel('Concentration')
+
+       
+
+        
 #     # print(A_MII2)
 #     # print(AM)
     if scenario_nr == "2" or scenario_nr == "both":
@@ -376,10 +358,10 @@ def plots_fe(scenario_nr):
         plt.ylabel('Count')
 
         plt.subplot(3, 3, 7)
-        plt.plot(time, CI2[1:], label=r'$C_{I}$(Scenario 2)')
+        plt.plot(time, A_Malpha2[1:], label=r'$A_{M\alpha}$(Scenario 2)')
         plt.legend()
         plt.xlabel('Time')
-        plt.ylabel('Concentration')
+        plt.ylabel('Count')
 
         plt.subplot(3, 3, 8)
         plt.plot(time, CIII2[1:], label=r'$C_{III}$(Scenario 2)')
@@ -388,144 +370,114 @@ def plots_fe(scenario_nr):
         plt.ylabel('Concentration')
 
         plt.subplot(3, 3, 9)
-        plt.plot(time, A_Malpha2[1:], label=r'$A_{M\alpha}$(Scenario 2)')
+        plt.plot(time, CI2[1:], label=r'$C_{I}$(Scenario 2)')
         plt.legend()
+        plt.xlabel('Time')
+        plt.ylabel('Concentration')
+
+       
+
+
+    if scenario_nr == "diff":
+        # Scenario 1
+        plt.subplot(3, 3, 1)
+        plt.plot(time, np.asarray(I1[1:]) - np.asarray(I2[1:]) , label=r'$IL-8$(Scenario 1)')
+        plt.legend()
+        plt.title('IL-8 concentration over time')
+        plt.xlabel('Time')
+        plt.ylabel('Concentration')
+
+        plt.subplot(3, 3, 2)
+        plt.plot(time, np.asarray(beta1[1:]) - np.asarray(beta2[1:]), label=r'$TGF-\beta1$(Scenario 1)')
+        plt.legend()
+        plt.title(r'TGF-$\beta1$ concentration over time')
+        plt.xlabel('Time')
+        plt.ylabel('Concentration')
+
+        plt.subplot(3, 3, 3)
+        plt.plot(time, np.asarray(A_MII1[1:]) - np.asarray(A_MII2[1:]), label=r'$A_{MII}$(Scenario 1)')
+        plt.legend()
+        plt.title(r'$A_{MII}$ cell count over time')
+        plt.xlabel('Time')
+        plt.ylabel('Count')
+
+        plt.subplot(3, 3, 4)
+        plt.plot(time, np.asarray(A_MC1[1:]) - np.asarray(A_MC2[1:]), label=r'$A_{MC}$(Scenario 1)')
+        plt.legend()
+        plt.title(r'$A_{MC}$ cell count over time')
+        plt.xlabel('Time')
+        plt.ylabel('Count')
+
+        plt.subplot(3, 3, 5)
+        plt.plot(time, np.asarray(A_F1[1:]) - np.asarray(A_F2[1:]), label=r'$A_{F}$(Scenario 1)')
+        plt.legend()
+        plt.title(r'$A_{F}$ cell count over time')
         plt.xlabel('Time')
         plt.ylabel('Count')
 
 
+        plt.subplot(3, 3, 6)
+        plt.plot(time, np.asarray(A_M1[1:]) - np.asarray(A_M2[1:]), label=r'$A_M$(Scenario 1)')
+        plt.legend()
+        plt.title(r'$A_M$ cell count over time')
+        plt.xlabel('Time')
+        plt.ylabel('Count')
 
-    # plt.tight_layout()
-    # plt.show()
+        plt.subplot(3, 3, 7)
+        plt.plot(time, np.asarray(A_Malpha1[1:]) - np.asarray(A_Malpha2[1:]), label=r'$A_{M\alpha}$(Scenario 1)')
+        plt.legend()
+        plt.title(r'$A_{M\alpha}$ cell count over time')
+        plt.xlabel('Time')
+        plt.ylabel('Count')
 
+        plt.subplot(3, 3, 8)
+        plt.plot(time, np.asarray(CIII1[1:]) - np.asarray(CIII2[1:]), label=r'$C_{III}(Scenario 1)$')
+        plt.legend()
+        plt.title(r'$C_{III}$ concentration over time ')
+        plt.xlabel('Time')
+        plt.ylabel('Concentration')
 
-# def plots_rk45():
-#     # Plotting concentrations of cytokines, proteins, and cell counts for agents separately for each scenario
-#     plt.figure(figsize=(15, 12))
+        plt.subplot(3, 3, 9)
+        plt.plot(time, np.asarray(CI1[1:]) - np.asarray(CI2[1:]), label=r'$C_I$(Scenario 1)')
+        plt.legend()
+        plt.title(r'$C_I$ concentration over time')
+        plt.xlabel('Time')
+        plt.ylabel('Concentration')
 
-#     # Scenario 1
-#     plt.subplot(3, 3, 1)
-#     plt.plot(time, I1, label=r'$IL-8$(Scenario 1)')
-#     plt.legend()
-#     plt.title('IL-8 concentration over time')
-#     plt.xlabel('Time')
-#     plt.ylabel('Concentration')
+       
 
-#     plt.subplot(3, 3, 2)
-#     plt.plot(time, beta1, label=r'$TGF-\beta1$(Scenario 1)')
-#     plt.legend()
-#     plt.title(r'TGF-$\beta1$ concentration over time')
-#     plt.xlabel('Time')
-#     plt.ylabel('Concentration')
-
-#     plt.subplot(3, 3, 3)
-#     plt.plot(time, A_MII1, label=r'$A_{MII}$(Scenario 1)')
-#     plt.legend()
-#     plt.title(r'$A_{MII}$ cell count over time')
-#     plt.xlabel('Time')
-#     plt.ylabel('Count')
-
-#     plt.subplot(3, 3, 4)
-#     plt.plot(time, A_MC1, label=r'$A_{MC}$(Scenario 1)')
-#     plt.legend()
-#     plt.title(r'$A_{MC}$ cell count over time')
-#     plt.xlabel('Time')
-#     plt.ylabel('Count')
-
-#     plt.subplot(3, 3, 5)
-#     plt.plot(time, A_F1, label=r'$A_{F}$(Scenario 1)')
-#     plt.legend()
-#     plt.title(r'$A_{F}$ cell count over time')
-#     plt.xlabel('Time')
-#     plt.ylabel('Count')
-
-
-#     plt.subplot(3, 3, 6)
-#     plt.plot(time, A_M1, label=r'$A_M$(Scenario 1)')
-#     plt.legend()
-#     plt.title(r'$A_M$ cell count over time')
-#     plt.xlabel('Time')
-#     plt.ylabel('Count')
-
-#     plt.subplot(3, 3, 7)
-#     plt.plot(time, CI1, label=r'$C_I$(Scenario 1)')
-#     plt.legend()
-#     plt.title(r'$C_I$ concentration over time')
-#     plt.xlabel('Time')
-#     plt.ylabel('Concentration')
-
-#     plt.subplot(3, 3, 8)
-#     plt.plot(time, CIII1, label=r'$C_{III}(Scenario 1)$')
-#     plt.legend()
-#     plt.title(r'$C_{III}$ concentration over time ')
-#     plt.xlabel('Time')
-#     plt.ylabel('Concentration')
-
-#     plt.subplot(3, 3, 9)
-#     plt.plot(time, A_Malpha1, label=r'$A_{M\alpha}$(Scenario 1)')
-#     plt.legend()
-#     plt.title(r'$A_{M\alpha}$ cell count over time')
-#     plt.xlabel('Time')
-#     plt.ylabel('Count')
-
-#     # Scenario 2
-#     plt.subplot(3, 3, 1)
-#     plt.plot(time, I2, label=r'$IL-8$(Scenario 2)')
-#     plt.legend()
-#     plt.xlabel('Time')
-#     plt.ylabel('Concentration')
-
-#     plt.subplot(3, 3, 2)
-#     plt.plot(time, beta2, label=r'$TGF-\beta1$(Scenario 2)')
-#     plt.legend()
-#     plt.xlabel('Time')
-#     plt.ylabel('Concentration')
-
-#     plt.subplot(3, 3, 3)
-#     plt.plot(time, A_MII2, label=r'$A_{MII}$(Scenario 2)')
-#     plt.legend()
-#     plt.xlabel('Time')
-#     plt.ylabel('Count')
-
-#     plt.subplot(3, 3, 4)
-#     plt.plot(time, A_MC2, label=r'$A_{MC}$(Scenario 2)')
-#     plt.legend()
-#     plt.xlabel('Time')
-#     plt.ylabel('Count')
-
-#     plt.subplot(3, 3, 5)
-#     plt.plot(time, A_F2, label=r'$A_{F}$(Scenario 2)')
-#     plt.legend()
-#     plt.title(r'$A_{F}$ cell count over time')
-#     plt.xlabel('Time')
-#     plt.ylabel('Count')
-#     plt.subplot(3, 3, 6)
-#     plt.plot(time, A_M2, label=r'$A_M$(Scenario 2)')
-#     plt.legend()
-#     plt.xlabel('Time')
-#     plt.ylabel('Count')
-
-#     plt.subplot(3, 3, 7)
-#     plt.plot(time, CI2, label=r'$C_{I}$(Scenario 2)')
-#     plt.legend()
-#     plt.xlabel('Time')
-#     plt.ylabel('Concentration')
-
-#     plt.subplot(3, 3, 8)
-#     plt.plot(time, CIII2, label=r'$C_{III}$(Scenario 2)')
-#     plt.legend()
-#     plt.xlabel('Time')
-#     plt.ylabel('Concentration')
-
-#     plt.subplot(3, 3, 9)
-#     plt.plot(time, A_Malpha2, label=r'$A_{M\alpha}$(Scenario 2)')
-#     plt.legend()
-#     plt.xlabel('Time')
-#     plt.ylabel('Count')
+       
 
 
 
     plt.tight_layout()
+    plt.savefig('simulation_{}'.format(scenario_nr), dpi = 300)
     plt.show()
 
-# plots_fe("both")
+plots_fe("diff")
+
+
+# k1, k2, k3, k4, k5, k6, k7, k8, k9, k10, k11, \
+# gamma, zeta, f_dillution, lambda1, lambda2, lambda3,\
+# lambda4, rho1, rho2, rho3, mu1, mu2, mu3, mu4, mu5, \
+# mu6, mu7, mu8, upsilon1, upsilon2, upsilon3, upsilon4, \
+# omega1, omega2, omega3, A_MII0, I0, beta0, A_MC0, A_F0, \
+# A_M0, A_Malpha0, CIII0, CI0 = 1.439119910008026, 3.3728020021867753, 1.4399999155221739, 4.023532898817432, 1.44, 1.44, 5.0, 5.0, 1.44, 1.44, 1.44, 0.0, -0.04162089475089391, 0.07462911254921226, 0.09999949313304642, 0.14399780357653444, 0.143973473962762, 0.14400000000000002, 0.21711248482614182, 0.14400000000000002, 0.14400000000000002, 0.1479723163153072, 1.0000016895565214, 0.14400000000000002, 0.007131564248382544, 0.061275680627146015, 0.14400000000000002, 0.14400000000000002, 0.14400000000000002, 0.14400000000000002, 1000.0, 1e-06, 1e-06, 0.5002137730367664, 0.6932530570060584, 0.6096239485272107, 1e-06, 1e-06, 4.886424078097683e-11, 5.63958642747979, 5.738349200502124, 6.283185307179586, 1e-05, 1e-05, 0.0625
+
+
+
+#1.439119910008026, 3.3728020021867753, 1.4399999155221739, 4.023532898817432, 1.44, 1.44, 5.0, 5.0, 1.44, 1.44, 1.44, 0.0, -0.04162089475089391, 0.07462911254921226, 0.09999949313304642, 0.14399780357653444, 0.143973473962762, 0.14400000000000002, 0.21711248482614182, 0.14400000000000002, 0.14400000000000002, 0.1479723163153072, 1.0000016895565214, 0.14400000000000002, 0.007131564248382544, 0.061275680627146015, 0.14400000000000002, 0.14400000000000002, 0.14400000000000002, 0.14400000000000002, 1000.0, 1e-06, 1e-06, 0.5002137730367664, 0.6932530570060584, 0.6096239485272107, 1e-06, 1e-06, 4.886424078097683e-11, 5.63958642747979, 5.738349200502124, 6.283185307179586, 1e-05, 1e-05, 0.0625
+
+# # Initial conditions
+# A_MII0 = 1000
+# I0 = 10**(-9) #
+# beta0 = 10**(-7) #
+# A_MC0 = 1000
+# A_F0 = 600
+# A_M0 = 50
+# A_Malpha0 = 0
+# CIII0 = 0
+# CI0 = 0
+# lambda1, lambda2, k1, mu1, omega1, lambda3, lambda4, mu5, rho1, k2, mu2, k7, k8, rho3, k10 = 25, 25, 10000, 0.1, 0.007, 5, 0.10, 0.000001, 0.01, 0.01, 1, 10, 10, 1, 1
+
+

@@ -8,15 +8,15 @@ from params import initial_parameters
 
 
 
-
-def A_MII1_func(mu1, A_MII0, t):
+def A_MII1_func(k1, mu1, A_MII0, t):
     A_MII1 = np.exp(-mu1 * t) * A_MII0
     return A_MII1 
 
 # a = A_MII1_func(k1, mu1, A_MII0, time)
 
 def A_MII2_func(k1, mu1, A_MII0, omega1, t):
-    A_MII2 = k1 * np.exp(-mu1 * t) * np.cos(omega1 * t) * A_MII0
+
+    A_MII2 = np.exp(-mu1 * t) * np.cos(omega1 * t) * A_MII0
     return A_MII2 
 
 def A_Malpha_func(rho2, A_M, A_Malpha0, t):
@@ -24,13 +24,14 @@ def A_Malpha_func(rho2, A_M, A_Malpha0, t):
     return A_Malpha
 
 
+
 # Scenario 1 equations
 def scenario1_equations(A_MII, I, beta, A_MC, A_F, A_M, A_Malpha, CIII, CI, parameters, dt, t):
-    A_MII_next = parameters['f_dillution'] * parameters['k1'] * np.exp(-parameters['mu1'] * t) 
-    I_next = I + dt  * parameters['f_dillution'] * (-parameters['k2'] * parameters['upsilon1'] * np.exp(-parameters['upsilon1'] * t) + parameters['k6'] * parameters['gamma'] * A_MC - parameters['mu2'] * I)
-    beta_next = beta + dt  * parameters['f_dillution'] * (parameters['k3'] * parameters['upsilon2'] * np.exp(parameters['upsilon2'] * t) + parameters['k4'] * parameters['gamma'] * A_MII + parameters['k5'] * parameters['gamma'] * A_MC - parameters['mu3'] * beta)
+    A_MII_next = A_MII1_func(parameters['k1'], parameters['mu1'], parameters['A_MII0'], t)
+    I_next = I + dt  * (-parameters['k2'] * parameters['upsilon1'] * np.exp(-parameters['upsilon1'] * t) + parameters['k6'] * parameters['gamma'] * A_MC - parameters['mu2'] * I)
+    beta_next = beta + dt * (parameters['k3'] * parameters['upsilon2'] * np.exp(parameters['upsilon2'] * t) + parameters['k4'] * parameters['gamma'] * A_MII + parameters['k5'] * parameters['gamma'] * A_MC - parameters['mu3'] * beta)
     A_MC_next = A_MC + dt * (A_MC * I * parameters['lambda3'] * parameters['zeta'] - parameters['mu4'] * A_MC)
-    A_F_next = A_F + dt * (parameters['lambda2'] * parameters['zeta'] * I * A_F - parameters['lambda1'] * parameters['zeta'] * beta * A_F - parameters['rho1'] * A_F - parameters['mu5'] * A_F)
+    A_F_next = A_F + dt * (parameters['lambda2'] * parameters['zeta'] * I * A_F + parameters['lambda1'] * parameters['zeta'] * beta * A_F - parameters['rho1'] * A_F - parameters['mu5'] * A_F)
     A_M_next = A_M + dt * (parameters['rho1'] * A_F + parameters['lambda1'] * parameters['zeta'] * beta * A_F + parameters['lambda4'] * parameters['zeta'] * A_F * A_M - parameters['mu6'] * A_M)
     A_Malpha_next = A_Malpha_func(parameters['rho2'], A_M, parameters['A_Malpha0'], t)
     CIII_next = CIII + dt * (parameters['k7'] * parameters['gamma'] * A_F + parameters['k10'] * parameters['gamma'] * A_M - parameters['rho3'] * CIII - parameters['mu7'] * CIII)
@@ -39,11 +40,11 @@ def scenario1_equations(A_MII, I, beta, A_MC, A_F, A_M, A_Malpha, CIII, CI, para
 
 # Scenario 2 equations
 def scenario2_equations(A_MII, I, beta, A_MC, A_F, A_M, A_Malpha, CIII, CI, parameters, dt, t):
-    A_MII_next = parameters['f_dillution'] * parameters['k1']*  np.exp(-parameters['mu1'] * t) * np.cos(parameters['omega1'] * t) 
-    I_next = I + dt  * parameters['f_dillution'] * (-parameters['k2'] * parameters['upsilon3'] * np.exp(-parameters['upsilon3'] * t) * np.cos(parameters['omega2'] * t)
-                       - parameters['k2']  * np.exp(-parameters['upsilon3'] * t) * parameters['omega2'] * np.sin(parameters['omega2'] * t) + parameters['k6'] * parameters['gamma'] * A_MC - parameters['mu2'] * I)
-    beta_next = beta + dt  * parameters['f_dillution'] * (parameters['k3'] * np.exp(-parameters['upsilon4'] * t) * parameters['omega3'] * np.cos(parameters['omega3'] * t)
-                             - parameters['k3']  * parameters['upsilon4'] * np.exp(-parameters['upsilon4'] * t) * np.sin(parameters['omega3'] * t)
+    A_MII_next = A_MII2_func(parameters['k1'], parameters['mu1'], parameters['A_MII0'], parameters['omega1'], t)
+    I_next = I + dt  * (-parameters['k2'] * parameters['upsilon3'] * np.exp(-parameters['upsilon3'] * t) * np.cos(parameters['omega2'] * t)
+                       - parameters['k2'] * np.exp(-parameters['upsilon3'] * t) * parameters['omega2'] * np.sin(parameters['omega2'] * t) + parameters['k6'] * parameters['gamma'] * A_MC - parameters['mu2'] * I)
+    beta_next = beta + dt  * (parameters['k3'] * np.exp(-parameters['upsilon4'] * t) * parameters['omega3'] * np.cos(parameters['omega3'] * t)
+                             - parameters['k3'] * parameters['upsilon4'] * np.exp(-parameters['upsilon4'] * t) * np.sin(parameters['omega3'] * t)
                              + parameters['k4'] * parameters['gamma'] * A_MII + parameters['k5'] * parameters['gamma'] * A_MC - parameters['mu3'] * beta)
     A_MC_next = A_MC + dt * (A_MC * I * parameters['lambda3'] * parameters['zeta'] - parameters['mu4'] * A_MC)
     A_F_next = A_F + dt * (parameters['lambda2'] * parameters['zeta'] * I * A_F - parameters['lambda1'] * parameters['zeta'] * beta * A_F - parameters['rho1'] * A_F - parameters['mu5'] * A_F)
@@ -53,17 +54,17 @@ def scenario2_equations(A_MII, I, beta, A_MC, A_F, A_M, A_Malpha, CIII, CI, para
     CI_next = CI + dt * (parameters['rho3'] * CIII + parameters['k9'] * parameters['gamma'] * A_M + parameters['k4'] * parameters['gamma'] * A_Malpha + parameters['k8'] * parameters['gamma'] * A_F * parameters['k11'] * parameters['gamma'] * A_Malpha - parameters['mu8'] * CI)
     return A_MII_next, I_next, beta_next, A_MC_next, A_F_next, A_M_next, A_Malpha_next, CIII_next, CI_next
 
+dt = 1/(60*24)
+dt_hour = 1/60
 
-day_conversion = 60 * 24
-
-ranges_for_production = (0.001, 10)
+ranges_for_production = (10**-6 * dt, 10 * dt)
 ranges_for_upsi = (0.001, 0.1)
-ranges_for_omega = (0, 2 * np.pi)
+ranges_for_omega = (0, 90 * np.pi * dt)
 ranges_for_gamma = (1.0 * 10**-7, 1.0 * 10**-5)
 ranges_for_zeta = (1.0 * 10**-7, 1.0 * 10**-1)
-ranges_for_mu = (0.0001, 10)
-ranges_for_lambdas = ranges_for_mu
-ranges_for_rhos = ranges_for_mu
+ranges_for_mu = (0.0001*dt, 10*dt)
+ranges_for_lambdas = (1*dt, 100*dt)
+ranges_for_rhos = (0, 60*dt)
 
 # Define parameter ranges for sensitivity analysis
 p_ranges = {
@@ -103,9 +104,9 @@ p_ranges = {
   'A_MC0': (0, 3000),
   'A_F0': (0, 3000),
   'A_M0': (0, 3000),
-  'A_Malpha0':(0, 0.000001),
-   'CI0':(0, 0.000001),
-   'CIII0':(0, 0.000001), 
+  'A_Malpha0':(0, 5),
+   'CI0':(0, 0.001),
+   'CIII0':(0, 0.001), 
    'omega1': ranges_for_omega, 
    'omega2': ranges_for_omega, 
    'omega3': ranges_for_omega,
@@ -118,10 +119,14 @@ p_ranges = {
 # Define your simulation function here (using the initial_parameters)
 def run_simulation(parameters, scenario_nr):
     # Time parameters
+    dt = 1/(60*24)
+    dt_hour = 1/60
+
+    # Time parameters
     weeks = 30
     n_days_in_week = 7
     t_max =  weeks * n_days_in_week # Maximum simulation time(weeks)
-    dt = weeks/t_max # Time step
+    # dt = 0.001 # Time step
 
     # Forward Euler method
     timesteps = int(t_max / dt)
@@ -282,66 +287,65 @@ def objective_function(params, scenario_nr):
     return objective
 
 
-day_conversion = 60 * 24 #
 # Production Parameters 
-k1 = float(2.34 * 10**-6) # rho2 https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1009839
-k2 = 234 * 10**-5 * day_conversion # day combi model
-k3 = 0.15
-k4 = 280 * 10**-5 * day_conversion # day combi model
-k5 = 0.2
-k6 = 0.3 
-k7 = 50 #* 10**-5 # k1 and k2 between 30-60 https://zero.sci-hub.se/3771/b68709ea5f5640da4199e36ff25ef036/cumming2009.pdf
-k8 = 30 #* 10**-5 # k1 and k2 between 30-60 https://zero.sci-hub.se/3771/b68709ea5f5640da4199e36ff25ef036/cumming2009.pdf
-k9 = 0.23
-k10 = 0.1
-k11 = 2 * 10**(-7) * day_conversion # https://www.sciencedirect.com/science/article/pii/S0045782516302857?casa_token=ByHEzHgojSEAAAAA:XNdfPARqEPtiO3rcqb0jo9d--utWdu-swPxNKOLyK5huphzY4TcRxiVo4c4yzCASMY-tOswVpzY#br000425
+k1 = 2.34 * 10**(-5) * dt # rho2 https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1009839
+k2 = 2.34 * 10**(-5) * dt # day combi model ****
+k3 = 1 * 10**(-5) * dt
+k4 = 2.80 * 10**(-5) * dt # day combi model *****
+k5 = 0.00001 * dt
+k6 = 0.0003 * dt
+k7 = 1 * dt # k1 and k2 between 30-60 https://zero.sci-hub.se/3771/b68709ea5f5640da4199e36ff25ef036/cumming2009.pdf
+k8 = 1 * dt # dayhttps://link.springer.com/article/10.1007/s11538-012-9751-z/tables/1
+k9 = 50 * 10**(-5) * dt 
+k10 = 30 * 10**(-5) * dt
+k11 = 2 * 10**(-5) * dt # https://www.sciencedirect.com/science/article/pii/S0045782516302857?casa_token=ByHEzHgojSEAAAAA:XNdfPARqEPtiO3rcqb0jo9d--utWdu-swPxNKOLyK5huphzY4TcRxiVo4c4yzCASMY-tOswVpzY#br000425
 
 # Conversion parameters
-gamma = 10**(-5)
-zeta = 10**(-5)
-f_dillution = float(1/16) #
+gamma = 10**(-5) 
+zeta = 10**(-2) # fixed
+f_dillution = 1/16 
 
 # Activation parameters
-lambda1 = 0.001 * day_conversion # https://www.sciencedirect.com/science/article/pii/S0045782516302857?casa_token=ByHEzHgojSEAAAAA:XNdfPARqEPtiO3rcqb0jo9d--utWdu-swPxNKOLyK5huphzY4TcRxiVo4c4yzCASMY-tOswVpzY#br000435
-lambda2 = 0.04
-lambda3 = 0.08
-lambda4 = 0.03
+lambda1 = 0.001 * dt_hour # https://www.sciencedirect.com/science/article/pii/S0045782516302857?casa_token=ByHEzHgojSEAAAAA:XNdfPARqEPtiO3rcqb0jo9d--utWdu-swPxNKOLyK5huphzY4TcRxiVo4c4yzCASMY-tOswVpzY#br000435
+lambda2 = 1 * dt # fixed
+lambda3 = 50 * dt
+lambda4 = 5 * dt
 
 # Transition parameters
-rho1 = 0.3 # https://link.springer.com/article/10.1007/s11538-012-9751-z/tables/1
-rho2 = 0.02
-rho3 = 0.01
+rho1 = 0.3 * dt# https://link.springer.com/article/10.1007/s11538-012-9751-z/tables/1
+rho2 = 24 * dt
+rho3 = 0.1 * dt
 
 # Decay parameters
-mu1 = float(0.07) # day-1 mu_AM https://link.springer.com/article/10.1186/1471-2105-14-S6-S7/tables/2
-mu2 = 7 # day-1 mu_CH https://link.springer.com/article/10.1186/1471-2105-14-S6-S7/tables/2
-mu3 = 0.03
-mu4 = 0.01
-mu5 = 0.1 # https://link.springer.com/article/10.1007/s11538-012-9751-z/tables/1
-mu6 = 0.04
+mu1 = 0.07 * dt # day-1 mu_AM https://link.springer.com/article/10.1186/1471-2105-14-S6-S7/tables/2
+mu2 = 7 * dt # day-1 mu_CH https://link.springer.com/article/10.1186/1471-2105-14-S6-S7/tables/2
+mu3 = 30 * dt
+mu4 = 0.015
+mu5 = 0.1 * dt # day https://link.springer.com/article/10.1007/s11538-012-9751-z/tables/1
+mu6 = 0.0005 * dt
 mu6 = 0.03
-mu7 = 9.7 * 10**(-5) * day_conversion # https://www.sciencedirect.com/science/article/pii/S0045782516302857?casa_token=ByHEzHgojSEAAAAA:XNdfPARqEPtiO3rcqb0jo9d--utWdu-swPxNKOLyK5huphzY4TcRxiVo4c4yzCASMY-tOswVpzY#br000475
-mu8 = 9.7 * 10**(-5) * day_conversion # https://www.sciencedirect.com/science/article/pii/S0045782516302857?casa_token=ByHEzHgojSEAAAAA:XNdfPARqEPtiO3rcqb0jo9d--utWdu-swPxNKOLyK5huphzY4TcRxiVo4c4yzCASMY-tOswVpzY#br000475
+mu7 = 9.7 * 10**(-5) * dt # https://www.sciencedirect.com/science/article/pii/S0045782516302857?casa_token=ByHEzHgojSEAAAAA:XNdfPARqEPtiO3rcqb0jo9d--utWdu-swPxNKOLyK5huphzY4TcRxiVo4c4yzCASMY-tOswVpzY#br000475
+mu8 = 9.7 * 10**(-5) * dt # https://www.sciencedirect.com/science/article/pii/S0045782516302857?casa_token=ByHEzHgojSEAAAAA:XNdfPARqEPtiO3rcqb0jo9d--utWdu-swPxNKOLyK5huphzY4TcRxiVo4c4yzCASMY-tOswVpzY#br000475
 
 # sinusoidal parameters
-upsilon1 = -0.02 # negative value
-upsilon2 = 0.03
+upsilon1 = -0.001#-0.001 # negative value
+upsilon2 = -1
 upsilon3 = 0.01
-upsilon4 = 0.02
-omega1 = 0.5
-omega2 = 0.7
-omega3 = 0.6
+upsilon4 = 0.001
+omega1 =   1/2 * np.pi * dt
+omega2 =   80* np.pi *dt
+omega3 =  60*np.pi *dt
 
 # Initial conditions
-A_MII0 = 2000
+A_MII0 = 1000
 I0 = 10**(-9) #
 beta0 = 10**(-7) #
-A_MC0 = 100
+A_MC0 = 1000
 A_F0 = 500
-A_M0 = 20
-A_Malpha0 = 0
-CIII0 = 0
-CI0 = 0
+A_M0 = 100
+A_Malpha0 = 1
+CIII0 = 0.001
+CI0 = 0.0001
 
 parameters = {
       'k1': k1, 'k2': k2, 'k3': k3, 'k4': k4, 'k5': k5, 'k6': k6, 'k7': k7, 'k8': k8, 'k9': k9, 'k10': k10, 'k11': k11,
@@ -359,20 +363,10 @@ parameters = {
 
 initial_guess = parameters
 # Set the noise level (adjust this value based on the desired sensitivity)
-noise_level = 0.001  # Example noise level, you can adjust this
+noise_level = 0.0001  # Example noise level, you can adjust this
 # Generate noisy initial parameters with added noise within specified ranges
 noisy_initial_params = generate_noisy_parameters(initial_guess, p_ranges, noise_level)
 scenario_nr = "1"
-
-weeks = 30
-n_days_in_week = 7
-t_max =  weeks * n_days_in_week # Maximum simulation time(weeks)
-dt = 0.1 # Time step
-
-# Forward Euler method
-timesteps = int(t_max / dt)
-time = np.linspace(0, t_max, timesteps)
-
 
 # print(len(initial_params))
 # Perform optimization with bounds as specified in p_ranges
