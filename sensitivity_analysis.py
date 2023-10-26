@@ -1,7 +1,7 @@
 import numpy as np
 from SALib.sample import saltelli
 from SALib.analyze import sobol
-import pickle  # For saving and loading data
+import json
 
 
 
@@ -127,7 +127,7 @@ initial_parameters = {
 
 
 # Define a range for incrementing parameters
-parameter_increment = 1e-7  # You can adjust this increment value based on your needs
+parameter_increment = 1e-2  # You can adjust this increment value based on your needs
 
     
 # Create the problem dictionary with bounds based on the initial guess and increment
@@ -137,15 +137,17 @@ problem = {
     'bounds': [[initial_parameters[param] - parameter_increment, initial_parameters[param] + parameter_increment] for param in initial_parameters]
 }
 
+# print([[initial_parameters[param] - parameter_increment, initial_parameters[param] + parameter_increment] for param in initial_parameters])
 # Check if saved samples exist, if not, generate new samples and save them
 try:
-    with open('sampled_params.pkl', 'rb') as f:
-        param_values = pickle.load(f)
+    with open('sampled_params.json', 'r') as f:
+        param_values_list = json.load(f)
+    param_values = np.array(param_values_list)
 except FileNotFoundError:
-    param_values = saltelli.sample(problem, 1000, calc_second_order=True)
-    with open('sampled_params.pkl', 'wb') as f:
-        pickle.dump(param_values, f)
-
+    param_values = saltelli.sample(problem, 512, calc_second_order=True)
+    param_values_list = param_values.tolist()  # Convert NumPy array to list for JSON serialization
+    with open('sampled_params.json', 'w') as f:
+        json.dump(param_values_list, f)
 # Define a function that runs your model with given parameters and returns the output of interest
 def model_output(params, scenario=1):
     outputs = []
@@ -223,22 +225,27 @@ def model_output(params, scenario=1):
         return np.array(outputs)
 ## Rest of your code for sampling, running the model, and performing sensitivity analysis goes here.
 
-# Saving Outputs
+# Scenario 1
 try:
-    with open('model_outputs_scenario1.pkl', 'rb') as f:
-        outputs1 = pickle.load(f)
+    with open('model_outputs_scenario1.json', 'r') as f:
+        outputs1 = np.array(json.load(f))
 except FileNotFoundError:
     outputs1 = np.array([model_output(params, scenario=1) for params in param_values])
-    with open('model_outputs_scenario1.pkl', 'wb') as f:
-        pickle.dump(outputs1, f)
+    with open('model_outputs_scenario1.json', 'w') as f:
+        json.dump(outputs1.tolist(), f)
 
-try:
-    with open('model_outputs_scenario2.pkl', 'rb') as f:
-        outputs2 = pickle.load(f)
-except FileNotFoundError:
-    outputs2 = np.array([model_output(params, scenario=2) for params in param_values])
-    with open('model_outputs_scenario2.pkl', 'wb') as f:
-        pickle.dump(outputs2, f)
+# # Scenario 2
+# try:
+#     with open('model_outputs_scenario2.json', 'r') as f:
+#         outputs2 = np.array(json.load(f))
+# except FileNotFoundError:
+#     outputs2 = np.array([model_output(params, scenario=2) for params in param_values])
+#     with open('model_outputs_scenario2.json', 'w') as f:
+#         json.dump(outputs2.tolist(), f)
+
+# Scenario 1
+with open('model_outputs_scenario1.json', 'r') as f:
+    outputs1 = np.array(json.load(f))
 
 # Perform Sobol sensitivity analysis for scenario 1
 Sobol_indices_scenario1 = sobol.analyze(problem, outputs1, calc_second_order=True, print_to_console=False)
@@ -247,10 +254,15 @@ Sobol_indices_scenario1 = sobol.analyze(problem, outputs1, calc_second_order=Tru
 print("Scenario 1 Sobol Indices (First Order):", Sobol_indices_scenario1['S1'])
 print("Scenario 1 Sobol Indices (Total Order):", Sobol_indices_scenario1['ST'])
 
-# Perform Sobol sensitivity analysis for scenario 2
-Sobol_indices_scenario2 = sobol.analyze(problem, outputs2, calc_second_order=True, print_to_console=False)
+# # Scenario 2
+# with open('model_outputs_scenario2.json', 'r') as f:
+#     outputs2 = np.array(json.load(f))
 
-# Print the Sobol indices (first-order and total-order indices) for scenario 2
-print("Scenario 2 Sobol Indices (First Order):", Sobol_indices_scenario2['S1'])
-print("Scenario 2 Sobol Indices (Total Order):", Sobol_indices_scenario2['ST'])
+
+# # Perform Sobol sensitivity analysis for scenario 2
+# Sobol_indices_scenario2 = sobol.analyze(problem, outputs2, calc_second_order=True, print_to_console=False)
+
+# # Print the Sobol indices (first-order and total-order indices) for scenario 2
+# print("Scenario 2 Sobol Indices (First Order):", Sobol_indices_scenario2['S1'])
+# print("Scenario 2 Sobol Indices (Total Order):", Sobol_indices_scenario2['ST'])
 
