@@ -1,6 +1,6 @@
 import numpy as np
 import json
-from scipy.optimize import minimize, curve_fit, Bounds
+from scipy.optimize import minimize, curve_fit
 from params import initial_parameters, defined_params
 from param_ranges import p_ranges
 from main import A_MII1_func,A_MII2_func,A_Malpha_func, scenario1_equations, scenario2_equations
@@ -204,7 +204,6 @@ result_list = []  # To store the best 10 results
 everchanaging_params = params.copy()
 for _ in range(100):  # Perform optimization 10 times and store the best results
     # Get initial parameter values
-s
     # Exclude parameters specified in def_params from optimization
     for param in def_params.keys():
             everchanaging_params[param] = def_params[param]
