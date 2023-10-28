@@ -147,19 +147,20 @@ try:
         param_values_list = json.load(f)
     param_values = np.array(param_values_list)
 except FileNotFoundError:
-    param_values = saltelli.sample(problem, 1024, calc_second_order=True)
+    param_values = saltelli.sample(problem, 128, calc_second_order=True)
     param_values_list = param_values.tolist()  # Convert NumPy array to list for JSON serialization
     with open('sampled_params.json', 'w') as f:
         json.dump(param_values_list, f)
 # Define a function that runs your model with given parameters and returns the output of interest
-def model_output(params, scenario=1):
+def model_output(params, cou, totalcou, scenario=1):
     outputs = []
+    print ((cou+1)/totalcou)
     for params in param_values:
         # Convert params to a dictionary with parameter names as keys
         sampled_params = {param_name: param_value for param_name, param_value in zip(initial_parameters.keys(), params)}
         
     # Time parameters
-    weeks = 30
+    weeks = 1
     n_days_in_week = 7
     t_max =  weeks * n_days_in_week # Maximum simulation time(weeks)
     dt = 1/(60*24)
@@ -193,9 +194,8 @@ def model_output(params, scenario=1):
 
 
     # Perform simulation for both scenarios using forward Euler method
-    for i in range(1, timesteps + 1):
+    for i in range(0, timesteps + 1):
         t = i * dt
-        
         # Scenario 1
         A_MII_next, I_next, beta_next, A_MC_next, A_F_next, A_M_next, A_Malpha_next, CIII_next, CI_next = \
             scenario1_equations(A_MII1[-1], I1[-1], beta1[-1], A_MC1[-1], A_F1[-1], A_M1[-1], A_Malpha1[-1], CIII1[-1], CI1[-1],sampled_params, dt, t)
@@ -221,68 +221,64 @@ def model_output(params, scenario=1):
         A_Malpha2.append(A_Malpha_next)
         CIII2.append(CIII_next)
         CI2.append(CI_next)
-        if scenario == 1:
-            outputs.append((A_MII1[-1], I1[-1], beta1[-1], A_MC1[-1], A_F1[-1], A_M1[-1], A_Malpha1[-1], CIII1[-1], CI1[-1]))
-        elif scenario == 2:
-            outputs.append((A_MII2[-1], I2[-1], beta2[-1], A_MC2[-1], A_F2[-1], A_M2[-1], A_Malpha2[-1], CIII2[-1], CI2[-1]))
+    if scenario == 1:
+        outputs.append((A_MII1[-1], I1[-1], beta1[-1], A_MC1[-1], A_F1[-1], A_M1[-1], A_Malpha1[-1], CIII1[-1], CI1[-1]))
+    elif scenario == 2:
+        outputs.append((A_MII2[-1], I2[-1], beta2[-1], A_MC2[-1], A_F2[-1], A_M2[-1], A_Malpha2[-1], CIII2[-1], CI2[-1]))
     return np.array(outputs)
 ## Rest of your code for sampling, running the model, and performing sensitivity analysis goes here.
 
 # Scenario 1
+runningnow =0
 try:
     with open('model_outputs_scenario1.json', 'r') as f:
         outputs1 = np.array(json.load(f))
+    runningnow+=1
+    print(runningnow)
 except FileNotFoundError:
-    outputs1 = np.array([model_output(params, scenario=1) for params in param_values])
+    outputs1 = np.array([model_output(params, cou, len(param_values), scenario=1) for cou, params in enumerate(param_values)])
     with open('model_outputs_scenario1.json', 'w') as f:
         json.dump(outputs1.tolist(), f)
-
+    runningnow += 1
+    print(runningnow)
 # Scenario 2
 try:
     with open('model_outputs_scenario2.json', 'r') as f:
         outputs2 = np.array(json.load(f))
+    runningnow += 1
+    print(runningnow)
 except FileNotFoundError:
     outputs2 = np.array([model_output(params, scenario=2) for params in param_values])
     with open('model_outputs_scenario2.json', 'w') as f:
         json.dump(outputs2.tolist(), f)
+    runningnow += 1
+    print(runningnow)
 
-
-############ SCENARIO 1 ANALYSIS. ###########
 # Scenario 1
-with open('model_outputs_scenario1.json', 'r') as f:
-    outputs1 = np.array(json.load(f))
-
-print("shape of outputs1:",np.shape(outputs1))
-# Reshape outputs1 to have dimensions (number of samples, number of outputs)
-outputs1_reshaped = outputs1.reshape(outputs1.shape[0], -1)
-
-
-# Perform Sobol sensitivity analysis for scenario 1
-Sobol_indices_scenario1 = sobol.analyze(problem, outputs1_reshaped, calc_second_order=True, print_to_console=False)
-
-# Save Sobol indices for Scenario 1 to a JSON file
-with open('sobol_indices_scenario1.json', 'w') as json_file:
-    json.dump(Sobol_indices_scenario1, json_file)
-
-# Print the Sobol indices (first-order and total-order indices) for scenario 1
-print("Scenario 1 Sobol Indices (First Order):", Sobol_indices_scenario1['S1'])
-print("Scenario 1 Sobol Indices (Total Order):", Sobol_indices_scenario1['ST'])
-
-
-############ SCENARIO 2 ANALYSIS. ###########
+# with open('model_outputs_scenario1.json', 'r') as f:
+#     outputs1 = np.array(json.load(f))
+#
+# print("shape of outputs1:",np.shape(outputs1))
+# # Reshape outputs1 to have dimensions (number of samples, number of outputs)
+# outputs1_reshaped = outputs1.reshape(outputs1.shape[0], -1)
+#
+#
+# # Perform Sobol sensitivity analysis for scenario 1
+# Sobol_indices_scenario1 = sobol.analyze(problem, outputs1_reshaped, calc_second_order=True, print_to_console=False)
+#
+# # Print the Sobol indices (first-order and total-order indices) for scenario 1
+# print("Scenario 1 Sobol Indices (First Order):", Sobol_indices_scenario1['S1'])
+# print("Scenario 1 Sobol Indices (Total Order):", Sobol_indices_scenario1['ST'])
+#
 # # Scenario 2
 # with open('model_outputs_scenario2.json', 'r') as f:
 #     outputs2 = np.array(json.load(f))
-
-
+#
+#
 # # Perform Sobol sensitivity analysis for scenario 2
 # Sobol_indices_scenario2 = sobol.analyze(problem, outputs2, calc_second_order=True, print_to_console=False)
-
-# # Save Sobol indices for Scenario 2 to a JSON file
-# with open('sobol_indices_scenario2.json', 'w') as json_file:
-#     json.dump(Sobol_indices_scenario2, json_file)
-
+#
 # # Print the Sobol indices (first-order and total-order indices) for scenario 2
 # print("Scenario 2 Sobol Indices (First Order):", Sobol_indices_scenario2['S1'])
 # print("Scenario 2 Sobol Indices (Total Order):", Sobol_indices_scenario2['ST'])
-
+#
