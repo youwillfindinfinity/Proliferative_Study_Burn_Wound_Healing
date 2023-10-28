@@ -1,6 +1,6 @@
 import numpy as np
-from SALib.sample import saltelli
-from SALib.analyze import sobol
+from SALib.sample import saltelli, sobol
+# from SALib.analyze import sobol
 import json
 
 
@@ -20,6 +20,8 @@ def A_Malpha_func(rho2, A_M, A_Malpha0, t):
     A_Malpha = rho2 * A_M * t * A_Malpha0
     return A_Malpha
 
+
+# Scenario 1 equations
 def scenario1_equations(A_MII, I, beta, A_MC, A_F, A_M, A_Malpha, CIII, CI, parameters, dt, t):
     A_MII_next = A_MII1_func(parameters['k1'], parameters['mu1'], parameters['A_MII0'], t)
     I_next = I + dt  * (-parameters['k2'] * parameters['upsilon1'] * np.exp(-parameters['upsilon1'] * t) + parameters['k6'] * parameters['gamma'] * A_MC - parameters['mu2'] * I)
@@ -36,7 +38,7 @@ def scenario1_equations(A_MII, I, beta, A_MC, A_F, A_M, A_Malpha, CIII, CI, para
 def scenario2_equations(A_MII, I, beta, A_MC, A_F, A_M, A_Malpha, CIII, CI, parameters, dt, t):
     A_MII_next = A_MII2_func(parameters['k1'], parameters['mu1'], parameters['A_MII0'], parameters['omega1'], t)
     I_next = I + dt  * (-parameters['k2'] * parameters['upsilon3'] * np.exp(-parameters['upsilon3'] * t) * np.cos(parameters['omega2'] * t)
-                       - parameters['k2'] * np.exp(-parameters['upsilon3'] * t) * parameters['omega2'] * np.sin(parameters['omega2'] * t) + parameters['k6'] * parameters['gamma'] * A_MC - parameters['mu2'] * I)
+                       - parameters['k2'] * np.exp(-parameters['upsilon3'] * t) * parameters['omega2'] * np.sin(parameters['omega2'] * t) + parameters['k6'] * parameters['gamma'] * A_MC- parameters['mu2'] * I)
     beta_next = beta + dt  * (parameters['k3'] * np.exp(-parameters['upsilon4'] * t) * parameters['omega3'] * np.cos(parameters['omega3'] * t)
                              - parameters['k3'] * parameters['upsilon4'] * np.exp(-parameters['upsilon4'] * t) * np.sin(parameters['omega3'] * t)
                              + parameters['k4'] * parameters['gamma'] * A_MII + parameters['k5'] * parameters['gamma'] * A_MC - parameters['mu3'] * beta)
@@ -51,64 +53,66 @@ def scenario2_equations(A_MII, I, beta, A_MC, A_F, A_M, A_Malpha, CIII, CI, para
 dt = 1/(60*24)
 dt_hour = 1/60
 # Production Parameters 
-k1 = 2.34 * 10**(-5) * dt # rho2 https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1009839
-k2 = 2.34 * 10**(-5) * dt # day combi model ****
-k3 = 1 * 10**(-5) * dt
-k4 = 2.80 * 10**(-5) * dt # day combi model *****
-k5 = 0.00001 * dt
-k6 = 0.0003 * dt
-k7 = 1 * dt # k1 and k2 between 30-60 https://zero.sci-hub.se/3771/b68709ea5f5640da4199e36ff25ef036/cumming2009.pdf
-k8 = 1 * dt # dayhttps://link.springer.com/article/10.1007/s11538-012-9751-z/tables/1
-k9 = 50 * 10**(-5) * dt 
-k10 = 30 * 10**(-5) * dt
-k11 = 2 * 10**(-5) * dt # https://www.sciencedirect.com/science/article/pii/S0045782516302857?casa_token=ByHEzHgojSEAAAAA:XNdfPARqEPtiO3rcqb0jo9d--utWdu-swPxNKOLyK5huphzY4TcRxiVo4c4yzCASMY-tOswVpzY#br000425
+k1 = 2.34 * 10**(-5) * dt #2.34 * 10**(-5) * dt *rho2 https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1009839
+k2 = 2.34 * 10**(-5) * dt #2.34 * 10**(-5) * dt  combi model ****
+k3 = 1 * 10**(-5) * dt # 1 * 10**(-5) * dt 
+k4 = 8.80 * 10**(-5) * dt # 28.0 * 10**(-5) * dt day combi model *****
+k5 = 0.00001 * dt # 0.00001 * dt
+k6 = 0.0005 * dt # 0.0005 * dt
+k7 = 30 * dt #30 * dt  k1 and k2 between 30-60 https://zero.sci-hub.se/3771/b68709ea5f5640da4199e36ff25ef036/cumming2009.pdf
+k8 = 1 * dt # 1 * dt https://link.springer.com/article/10.1007/s11538-012-9751-z/tables/1
+k9 = 50 * dt # 50 * dt
+k10 = 30 * dt # 30 * dt
+k11 = 20 * dt # 2000000 * dt production of CI forced by myofibroblasts https://www.sciencedirect.com/science/article/pii/S0045782516302857?casa_token=ByHEzHgojSEAAAAA:XNdfPARqEPtiO3rcqb0jo9d--utWdu-swPxNKOLyK5huphzY4TcRxiVo4c4yzCASMY-tOswVpzY#br000425
 
 # Conversion parameters
 gamma = 10**(-5) 
-zeta = 10**(-2) # fixed
+zeta = 10**(5) # fixed
 f_dillution = 1/16 
 
 # Activation parameters
-lambda1 = 0.001 * dt_hour # https://www.sciencedirect.com/science/article/pii/S0045782516302857?casa_token=ByHEzHgojSEAAAAA:XNdfPARqEPtiO3rcqb0jo9d--utWdu-swPxNKOLyK5huphzY4TcRxiVo4c4yzCASMY-tOswVpzY#br000435
-lambda2 = 1 * dt # fixed
-lambda3 = 50 * dt
-lambda4 = 5 * dt
+lambda1 = 100 * dt # 100 * dt https://www.sciencedirect.com/science/article/pii/S0045782516302857?casa_token=ByHEzHgojSEAAAAA:XNdfPARqEPtiO3rcqb0jo9d--utWdu-swPxNKOLyK5huphzY4TcRxiVo4c4yzCASMY-tOswVpzY#br000435
+lambda2 = 400 * dt # 400 * dt
+lambda3 = 300 * dt # 300 * dt
+lambda4 = 10**(-7) * dt # 10**(-7) * dt 
 
 # Transition parameters
-rho1 = 0.3 * dt# https://link.springer.com/article/10.1007/s11538-012-9751-z/tables/1
-rho2 = 24 * dt
-rho3 = 0.1 * dt
+rho1 = 5 * dt
+rho2 = 3 * dt
+rho3 = 18 * dt # transition CIII to CI
 
-# Decay parameters
-mu1 = 0.07 * dt # day-1 mu_AM https://link.springer.com/article/10.1186/1471-2105-14-S6-S7/tables/2
-mu2 = 7 * dt # day-1 mu_CH https://link.springer.com/article/10.1186/1471-2105-14-S6-S7/tables/2
-mu3 = 30 * dt
-mu4 = 0.015
-mu5 = 0.1 * dt # day https://link.springer.com/article/10.1007/s11538-012-9751-z/tables/1
-mu6 = 0.0005 * dt
-mu6 = 0.03
-mu7 = 9.7 * 10**(-5) * dt # https://www.sciencedirect.com/science/article/pii/S0045782516302857?casa_token=ByHEzHgojSEAAAAA:XNdfPARqEPtiO3rcqb0jo9d--utWdu-swPxNKOLyK5huphzY4TcRxiVo4c4yzCASMY-tOswVpzY#br000475
-mu8 = 9.7 * 10**(-5) * dt # https://www.sciencedirect.com/science/article/pii/S0045782516302857?casa_token=ByHEzHgojSEAAAAA:XNdfPARqEPtiO3rcqb0jo9d--utWdu-swPxNKOLyK5huphzY4TcRxiVo4c4yzCASMY-tOswVpzY#br000475
+# # Decay parameters
+mu1 = 2 * dt # 2 * dt# day-1 mu_AM https://link.springer.com/article/10.1186/1471-2105-14-S6-S7/tables/2
+mu2 = 12 * dt # 12 * dt  day-1 mu_CH https://link.springer.com/article/10.1186/1471-2105-14-S6-S7/tables/2
+mu3 = 10 * dt # 10 * dt
+mu4 = 11 * dt # 11 * dt
+mu5 = 10 * dt # 10 * dt day https://link.springer.com/article/10.1007/s11538-012-9751-z/tables/1
+mu6 = 10 * dt # 10 * dt
+mu7 = 5 * dt # 9.7 * 10**(-5) * dt https://www.sciencedirect.com/science/article/pii/S0045782516302857?casa_token=ByHEzHgojSEAAAAA:XNdfPARqEPtiO3rcqb0jo9d--utWdu-swPxNKOLyK5huphzY4TcRxiVo4c4yzCASMY-tOswVpzY#br000475
+mu8 = 1 * dt # 9.7 * 10**(-5) * dthttps://www.sciencedirect.com/science/article/pii/S0045782516302857?casa_token=ByHEzHgojSEAAAAA:XNdfPARqEPtiO3rcqb0jo9d--utWdu-swPxNKOLyK5huphzY4TcRxiVo4c4yzCASMY-tOswVpzY#br000475
 
 # sinusoidal parameters
-upsilon1 = -0.001#-0.001 # negative value
-upsilon2 = -1
-upsilon3 = 0.01
-upsilon4 = 0.001
-omega1 =   1/2 * np.pi * dt
-omega2 =   80* np.pi *dt
-omega3 =  60*np.pi *dt
+upsilon1 = -0.001 #-0.001 # negative value
+upsilon2 = -0.1 # -0.1 
+upsilon3 = 0.001 # 0.0000001
+upsilon4 = 0.001 # 0.0001
+omega1 = 1*np.pi *dt # 1*np.pi *dt 
+omega2 = 100*np.pi *dt #80*np.pi *dt
+omega3 = 80*np.pi *dt #120*np.pi *dt
 
 # Initial conditions
 A_MII0 = 1000
-I0 = 10**(-9) #
-beta0 = 10**(-7) #
+I0 = 0.2* 10**(-8) #
+beta0 = 2.5 * 10**(-7) #
 A_MC0 = 1000
 A_F0 = 500
 A_M0 = 100
 A_Malpha0 = 1
 CIII0 = 0.001
-CI0 = 0.0001
+CI0 = 0.001
+
+
+
 
 
 
@@ -125,9 +129,8 @@ initial_parameters = {
       'CIII0': CIII0, 'CI0': CI0
   }
 
-
 # Define a range for incrementing parameters
-parameter_increment = 1e-2  # You can adjust this increment value based on your needs
+parameter_increment = 1e-5  # You can adjust this increment value based on your needs
 
     
 # Create the problem dictionary with bounds based on the initial guess and increment
@@ -144,7 +147,7 @@ try:
         param_values_list = json.load(f)
     param_values = np.array(param_values_list)
 except FileNotFoundError:
-    param_values = saltelli.sample(problem, 512, calc_second_order=True)
+    param_values = saltelli.sample(problem, 1024, calc_second_order=True)
     param_values_list = param_values.tolist()  # Convert NumPy array to list for JSON serialization
     with open('sampled_params.json', 'w') as f:
         json.dump(param_values_list, f)
@@ -234,35 +237,40 @@ except FileNotFoundError:
     with open('model_outputs_scenario1.json', 'w') as f:
         json.dump(outputs1.tolist(), f)
 
-# # Scenario 2
-# try:
-#     with open('model_outputs_scenario2.json', 'r') as f:
-#         outputs2 = np.array(json.load(f))
-# except FileNotFoundError:
-#     outputs2 = np.array([model_output(params, scenario=2) for params in param_values])
-#     with open('model_outputs_scenario2.json', 'w') as f:
-#         json.dump(outputs2.tolist(), f)
+# Scenario 2
+try:
+    with open('model_outputs_scenario2.json', 'r') as f:
+        outputs2 = np.array(json.load(f))
+except FileNotFoundError:
+    outputs2 = np.array([model_output(params, scenario=2) for params in param_values])
+    with open('model_outputs_scenario2.json', 'w') as f:
+        json.dump(outputs2.tolist(), f)
 
 # Scenario 1
 with open('model_outputs_scenario1.json', 'r') as f:
     outputs1 = np.array(json.load(f))
 
+print("shape of outputs1:",np.shape(outputs1))
+# Reshape outputs1 to have dimensions (number of samples, number of outputs)
+outputs1_reshaped = outputs1.reshape(outputs1.shape[0], -1)
+
+
 # Perform Sobol sensitivity analysis for scenario 1
-Sobol_indices_scenario1 = sobol.analyze(problem, outputs1, calc_second_order=True, print_to_console=False)
+Sobol_indices_scenario1 = sobol.analyze(problem, outputs1_reshaped, calc_second_order=True, print_to_console=False)
 
 # Print the Sobol indices (first-order and total-order indices) for scenario 1
 print("Scenario 1 Sobol Indices (First Order):", Sobol_indices_scenario1['S1'])
 print("Scenario 1 Sobol Indices (Total Order):", Sobol_indices_scenario1['ST'])
 
-# # Scenario 2
-# with open('model_outputs_scenario2.json', 'r') as f:
-#     outputs2 = np.array(json.load(f))
+# Scenario 2
+with open('model_outputs_scenario2.json', 'r') as f:
+    outputs2 = np.array(json.load(f))
 
 
-# # Perform Sobol sensitivity analysis for scenario 2
-# Sobol_indices_scenario2 = sobol.analyze(problem, outputs2, calc_second_order=True, print_to_console=False)
+# Perform Sobol sensitivity analysis for scenario 2
+Sobol_indices_scenario2 = sobol.analyze(problem, outputs2, calc_second_order=True, print_to_console=False)
 
-# # Print the Sobol indices (first-order and total-order indices) for scenario 2
-# print("Scenario 2 Sobol Indices (First Order):", Sobol_indices_scenario2['S1'])
-# print("Scenario 2 Sobol Indices (Total Order):", Sobol_indices_scenario2['ST'])
+# Print the Sobol indices (first-order and total-order indices) for scenario 2
+print("Scenario 2 Sobol Indices (First Order):", Sobol_indices_scenario2['S1'])
+print("Scenario 2 Sobol Indices (Total Order):", Sobol_indices_scenario2['ST'])
 

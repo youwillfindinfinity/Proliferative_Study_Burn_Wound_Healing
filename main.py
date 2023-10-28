@@ -12,7 +12,7 @@ def A_MII1_func(k1, mu1, A_MII0, t):
 
 def A_MII2_func(k1, mu1, A_MII0, omega1, t):
 
-    A_MII2 = A_MII0*np.exp(-mu1 * t) + np.cos(omega1 * t)
+    A_MII2 = A_MII0*np.exp(-mu1 * t) * np.cos(omega1 * t)
     return A_MII2 
 
 def A_Malpha_func(rho2, A_M, A_Malpha0, t):
@@ -23,17 +23,17 @@ def A_Malpha_func(rho2, A_M, A_Malpha0, t):
 dt = 1/(60*24)
 dt_hour = 1/60
 # Production Parameters 
-k1 = 2.34 * 10**(-5) * dt # rho2 https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1009839
-k2 = -23.4 * 10**(-5) * dt # day combi model ****
-k3 = 1 * 10**(-5) * dt
-k4 = 2.80 * 10**(-5) * dt # day combi model *****
-k5 = 0.00001 * dt
-k6 = 0.0003 * dt
-k7 = 1 * dt # k1 and k2 between 30-60 https://zero.sci-hub.se/3771/b68709ea5f5640da4199e36ff25ef036/cumming2009.pdf
-k8 = 1 * dt # dayhttps://link.springer.com/article/10.1007/s11538-012-9751-z/tables/1
-k9 = 50 * 10**(-5) * dt 
-k10 = 30 * 10**(-5) * dt
-k11 = 2 * 10**(-5) * dt # https://www.sciencedirect.com/science/article/pii/S0045782516302857?casa_token=ByHEzHgojSEAAAAA:XNdfPARqEPtiO3rcqb0jo9d--utWdu-swPxNKOLyK5huphzY4TcRxiVo4c4yzCASMY-tOswVpzY#br000425
+k1 = 2.34 * 10**(-5) * dt #2.34 * 10**(-5) * dt *rho2 https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1009839
+k2 = 2.34 * 10**(-5) * dt #2.34 * 10**(-5) * dt  combi model ****
+k3 = 1 * 10**(-5) * dt # 1 * 10**(-5) * dt 
+k4 = 8.80 * 10**(-5) * dt # 28.0 * 10**(-5) * dt day combi model *****
+k5 = 0.00001 * dt # 0.00001 * dt
+k6 = 0.0005 * dt # 0.0005 * dt
+k7 = 30 * dt #30 * dt  k1 and k2 between 30-60 https://zero.sci-hub.se/3771/b68709ea5f5640da4199e36ff25ef036/cumming2009.pdf
+k8 = 1 * dt # 1 * dt https://link.springer.com/article/10.1007/s11538-012-9751-z/tables/1
+k9 = 50 * dt # 50 * dt
+k10 = 30 * dt # 30 * dt
+k11 = 20 * dt # 2000000 * dt production of CI forced by myofibroblasts https://www.sciencedirect.com/science/article/pii/S0045782516302857?casa_token=ByHEzHgojSEAAAAA:XNdfPARqEPtiO3rcqb0jo9d--utWdu-swPxNKOLyK5huphzY4TcRxiVo4c4yzCASMY-tOswVpzY#br000425
 
 # Conversion parameters
 gamma = 10**(-5) 
@@ -41,45 +41,45 @@ zeta = 10**(5) # fixed
 f_dillution = 1/16 
 
 # Activation parameters
-lambda1 = 1* dt# https://www.sciencedirect.com/science/article/pii/S0045782516302857?casa_token=ByHEzHgojSEAAAAA:XNdfPARqEPtiO3rcqb0jo9d--utWdu-swPxNKOLyK5huphzY4TcRxiVo4c4yzCASMY-tOswVpzY#br000435
-lambda2 = 400 * dt # fixed
-lambda3 = 10 * dt
-lambda4 = 10**(-7) * dt
+lambda1 = 100 * dt # 100 * dt https://www.sciencedirect.com/science/article/pii/S0045782516302857?casa_token=ByHEzHgojSEAAAAA:XNdfPARqEPtiO3rcqb0jo9d--utWdu-swPxNKOLyK5huphzY4TcRxiVo4c4yzCASMY-tOswVpzY#br000435
+lambda2 = 400 * dt # 400 * dt
+lambda3 = 300 * dt # 300 * dt
+lambda4 = 10**(-7) * dt # 10**(-7) * dt 
 
 # Transition parameters
-rho1 = 1 * dt
-rho2 = 1 * dt
-rho3 = 1 * dt
+rho1 = 5 * dt
+rho2 = 3 * dt
+rho3 = 18 * dt # transition CIII to CI
 
 # # Decay parameters
-mu1 = 12 * dt# day-1 mu_AM https://link.springer.com/article/10.1186/1471-2105-14-S6-S7/tables/2
-mu2 = 7 * dt # day-1 mu_CH https://link.springer.com/article/10.1186/1471-2105-14-S6-S7/tables/2
-mu3 = 30 * dt
-mu4 = 1 * dt
-mu5 = 10 * dt # day https://link.springer.com/article/10.1007/s11538-012-9751-z/tables/1
-mu6 = 10 * dt
-mu7 = 9.7 * 10**(-5) * dt # https://www.sciencedirect.com/science/article/pii/S0045782516302857?casa_token=ByHEzHgojSEAAAAA:XNdfPARqEPtiO3rcqb0jo9d--utWdu-swPxNKOLyK5huphzY4TcRxiVo4c4yzCASMY-tOswVpzY#br000475
-mu8 = 9.7 * 10**(-5) * dt # https://www.sciencedirect.com/science/article/pii/S0045782516302857?casa_token=ByHEzHgojSEAAAAA:XNdfPARqEPtiO3rcqb0jo9d--utWdu-swPxNKOLyK5huphzY4TcRxiVo4c4yzCASMY-tOswVpzY#br000475
+mu1 = 2 * dt # 2 * dt# day-1 mu_AM https://link.springer.com/article/10.1186/1471-2105-14-S6-S7/tables/2
+mu2 = 12 * dt # 12 * dt  day-1 mu_CH https://link.springer.com/article/10.1186/1471-2105-14-S6-S7/tables/2
+mu3 = 10 * dt # 10 * dt
+mu4 = 11 * dt # 11 * dt
+mu5 = 10 * dt # 10 * dt day https://link.springer.com/article/10.1007/s11538-012-9751-z/tables/1
+mu6 = 10 * dt # 10 * dt
+mu7 = 5 * dt # 9.7 * 10**(-5) * dt https://www.sciencedirect.com/science/article/pii/S0045782516302857?casa_token=ByHEzHgojSEAAAAA:XNdfPARqEPtiO3rcqb0jo9d--utWdu-swPxNKOLyK5huphzY4TcRxiVo4c4yzCASMY-tOswVpzY#br000475
+mu8 = 1 * dt # 9.7 * 10**(-5) * dthttps://www.sciencedirect.com/science/article/pii/S0045782516302857?casa_token=ByHEzHgojSEAAAAA:XNdfPARqEPtiO3rcqb0jo9d--utWdu-swPxNKOLyK5huphzY4TcRxiVo4c4yzCASMY-tOswVpzY#br000475
 
 # sinusoidal parameters
-upsilon1 = -0.001#-0.001 # negative value
-upsilon2 = -1
-upsilon3 = 0.01
-upsilon4 = 0.0001
-omega1 = 80*np.pi * dt
-omega2 = 80* np.pi *dt
-omega3 = 60*np.pi *dt
+upsilon1 = -0.001 #-0.001 # negative value
+upsilon2 = -0.1 # -0.1 
+upsilon3 = 0.001 # 0.0000001
+upsilon4 = 0.001 # 0.0001
+omega1 = 1*np.pi *dt # 1*np.pi *dt 
+omega2 = 100*np.pi *dt #80*np.pi *dt
+omega3 = 80*np.pi *dt #120*np.pi *dt
 
 # Initial conditions
 A_MII0 = 1000
-I0 = 10**(-9) #
-beta0 = 10**(-7) #
+I0 = 0.2* 10**(-8) #
+beta0 = 2.5 * 10**(-7) #
 A_MC0 = 1000
 A_F0 = 500
 A_M0 = 100
 A_Malpha0 = 1
 CIII0 = 0.001
-CI0 = 0.0001
+CI0 = 0.001
 
 
 
@@ -100,34 +100,34 @@ parameters = {
 # Scenario 1 equations
 def scenario1_equations(A_MII, I, beta, A_MC, A_F, A_M, A_Malpha, CIII, CI, parameters, dt, t):
     A_MII_next = A_MII1_func(parameters['k1'], parameters['mu1'], parameters['A_MII0'], t)
-    I_next = I + dt  * (-parameters['k2'] * parameters['upsilon1'] * np.exp(-parameters['upsilon1'] * t) + parameters['k6'] * parameters['gamma'] * A_MC) #- parameters['mu2'] * I)
-    beta_next = beta + dt * (parameters['k3'] * parameters['upsilon2'] * np.exp(parameters['upsilon2'] * t) + parameters['k4'] * parameters['gamma'] * A_MII + parameters['k5'] * parameters['gamma'] * A_MC) #- parameters['mu3'] * beta)
+    I_next = I + dt  * (-parameters['k2'] * parameters['upsilon1'] * np.exp(-parameters['upsilon1'] * t) + parameters['k6'] * parameters['gamma'] * A_MC - parameters['mu2'] * I)
+    beta_next = beta + dt * (parameters['k3'] * parameters['upsilon2'] * np.exp(parameters['upsilon2'] * t) + parameters['k4'] * parameters['gamma'] * A_MII + parameters['k5'] * parameters['gamma'] * A_MC - parameters['mu3'] * beta)
     A_MC_next = A_MC + dt * (A_MC * I * parameters['lambda3'] * parameters['zeta'] - parameters['mu4'] * A_MC)
-    A_F_next = A_F + dt * (parameters['lambda2'] * parameters['zeta'] * I * A_F + parameters['lambda1'] * parameters['zeta'] * beta * A_F - parameters['rho1'] * A_F) #- parameters['mu5'] * A_F)
+    A_F_next = A_F + dt * (parameters['lambda2'] * parameters['zeta'] * I * A_F + parameters['lambda1'] * parameters['zeta'] * beta * A_F - parameters['rho1'] * A_F - parameters['mu5'] * A_F)
     A_M_next = A_M + dt * (parameters['rho1'] * A_F + parameters['lambda1'] * parameters['zeta'] * beta * A_F + parameters['lambda4'] * parameters['zeta'] * A_F * A_M - parameters['mu6'] * A_M)
     A_Malpha_next = A_Malpha_func(parameters['rho2'], A_M, parameters['A_Malpha0'], t)
-    CIII_next = CIII + dt * (parameters['k7'] * parameters['gamma'] * A_F + parameters['k10'] * parameters['gamma'] * A_M - parameters['rho3'] * CIII)# - parameters['mu7'] * CIII)
-    CI_next = CI + dt * (parameters['rho3'] * CIII + parameters['k9'] * parameters['gamma'] * A_M + parameters['k4'] * parameters['gamma'] * A_Malpha + parameters['k8'] * parameters['gamma'] * A_F * parameters['k11'] * parameters['gamma'] * A_Malpha)# - parameters['mu8'] * CI)
+    CIII_next = CIII + dt * (parameters['k7'] * parameters['gamma'] * A_F + parameters['k10'] * parameters['gamma'] * A_M - parameters['rho3'] * CIII - parameters['mu7'] * CIII)
+    CI_next = CI + dt * (parameters['rho3'] * CIII + parameters['k9'] * parameters['gamma'] * A_M + parameters['k4'] * parameters['gamma'] * A_Malpha + parameters['k8'] * parameters['gamma'] * A_F * parameters['k11'] * parameters['gamma'] * A_Malpha - parameters['mu8'] * CI)
     return A_MII_next, I_next, beta_next, A_MC_next, A_F_next, A_M_next, A_Malpha_next, CIII_next, CI_next
 
 # Scenario 2 equations
 def scenario2_equations(A_MII, I, beta, A_MC, A_F, A_M, A_Malpha, CIII, CI, parameters, dt, t):
     A_MII_next = A_MII2_func(parameters['k1'], parameters['mu1'], parameters['A_MII0'], parameters['omega1'], t)
     I_next = I + dt  * (-parameters['k2'] * parameters['upsilon3'] * np.exp(-parameters['upsilon3'] * t) * np.cos(parameters['omega2'] * t)
-                       - parameters['k2'] * np.exp(-parameters['upsilon3'] * t) * parameters['omega2'] * np.sin(parameters['omega2'] * t) + parameters['k6'] * parameters['gamma'] * A_MC)# - parameters['mu2'] * I)
+                       - parameters['k2'] * np.exp(-parameters['upsilon3'] * t) * parameters['omega2'] * np.sin(parameters['omega2'] * t) + parameters['k6'] * parameters['gamma'] * A_MC- parameters['mu2'] * I)
     beta_next = beta + dt  * (parameters['k3'] * np.exp(-parameters['upsilon4'] * t) * parameters['omega3'] * np.cos(parameters['omega3'] * t)
                              - parameters['k3'] * parameters['upsilon4'] * np.exp(-parameters['upsilon4'] * t) * np.sin(parameters['omega3'] * t)
-                             + parameters['k4'] * parameters['gamma'] * A_MII + parameters['k5'] * parameters['gamma'] * A_MC)#- parameters['mu3'] * beta)
+                             + parameters['k4'] * parameters['gamma'] * A_MII + parameters['k5'] * parameters['gamma'] * A_MC - parameters['mu3'] * beta)
     A_MC_next = A_MC + dt * (A_MC * I * parameters['lambda3'] * parameters['zeta'] - parameters['mu4'] * A_MC)
-    A_F_next = A_F + dt * (parameters['lambda2'] * parameters['zeta'] * I * A_F - parameters['lambda1'] * parameters['zeta'] * beta * A_F - parameters['rho1'] * A_F)#- parameters['mu5'] * A_F)
+    A_F_next = A_F + dt * (parameters['lambda2'] * parameters['zeta'] * I * A_F - parameters['lambda1'] * parameters['zeta'] * beta * A_F - parameters['rho1'] * A_F - parameters['mu5'] * A_F)
     A_M_next = A_M + dt * (parameters['rho1'] * A_F + parameters['lambda1'] * parameters['zeta'] * beta * A_F + parameters['lambda4'] * parameters['zeta'] * A_F * A_M - parameters['mu6'] * A_M)
     A_Malpha_next = A_Malpha_func(parameters['rho2'], A_M, parameters['A_Malpha0'], t)
-    CIII_next = CIII + dt * (parameters['k7'] * parameters['gamma'] * A_F + parameters['k10'] * parameters['gamma'] * A_M - parameters['rho3'] * CIII )#- parameters['mu7'] * CIII)
-    CI_next = CI + dt * (parameters['rho3'] * CIII + parameters['k9'] * parameters['gamma'] * A_M + parameters['k4'] * parameters['gamma'] * A_Malpha + parameters['k8'] * parameters['gamma'] * A_F * parameters['k11'] * parameters['gamma'] * A_Malpha)# - parameters['mu8'] * CI)
+    CIII_next = CIII + dt * (parameters['k7'] * parameters['gamma'] * A_F + parameters['k10'] * parameters['gamma'] * A_M - parameters['rho3'] * CIII - parameters['mu7'] * CIII)
+    CI_next = CI + dt * (parameters['rho3'] * CIII + parameters['k9'] * parameters['gamma'] * A_M + parameters['k4'] * parameters['gamma'] * A_Malpha + parameters['k8'] * parameters['gamma'] * A_F * parameters['k11'] * parameters['gamma'] * A_Malpha - parameters['mu8'] * CI)
     return A_MII_next, I_next, beta_next, A_MC_next, A_F_next, A_M_next, A_Malpha_next, CIII_next, CI_next
 
 # Time parameters
-weeks = 30
+weeks = 55
 n_days_in_week = 7
 t_max =  weeks * n_days_in_week # Maximum simulation time(weeks)
 # dt = 0.001 # Time step
@@ -189,18 +189,36 @@ for i in range(1, timesteps + 1):
     CIII2.append(CIII_next)
     CI2.append(CI_next)
     
-# plt.figure()
-# # plt.plot(time, np.array(beta1[1:])/10**(4), label = "beta")
-# # plt.plot(time, np.array(I1[1:])/10**(9), label="I")
-# plt.plot(time, np.array(A_MC1[1:]), label = "M_II 1")
-# plt.plot(time, np.array(A_MC2[1:]), label="M_II 2")
-# # plt.plot(time, A_MC1[1:], label="A_MC")
-# # plt.plot(time, A_F1[1:])
-# # plt.plot(time, np.asarray(A_M1[1:]))
-# # plt.yscale('log')
-# # plt.plot(time, A_Malpha1[1:])
+# # Create subplots
+# plt.figure(figsize=(12, 6))
 
+# # Subplot 1
+# plt.subplot(1, 2, 1)
+# # plt.plot(time, np.array(A_MC1[1:]), label="A_MC1", c='blue')
+# # plt.plot(time, np.array(A_MC2[1:]), label="A_MC2", c='lightblue')
+# plt.plot(time, np.array(A_MC1[1:]), label="A_MC1")
+# plt.plot(time, np.array(A_MC2[1:]), label="A_MC2")
 # plt.legend()
+# plt.title('Subplot 1')
+# plt.xlabel('Time')
+# plt.ylabel('Values')
+
+# # Subplot 2
+# plt.subplot(1, 2, 2)
+# # plt.plot(time, np.array(A_F1[1:]), label="F1", c='red')
+# # plt.plot(time, np.array(A_F2[1:]), label="F2", c='orange')
+# plt.plot(time, np.array(A_F1[1:]), label="F1")
+# plt.plot(time, np.array(A_F2[1:]), label="F2")
+# plt.legend()
+# plt.title('Subplot 2')
+# plt.xlabel('Time')
+# plt.ylabel('Values')
+
+
+# # Adjust layout
+# plt.tight_layout()
+
+# # Show the plots
 # plt.show()
 
 # # Time parameters
@@ -449,7 +467,7 @@ def plots_fe(scenario_nr):
     plt.savefig('simulation_{}'.format(scenario_nr), dpi = 300)
     plt.show()
 
-plots_fe("both")
+# plots_fe("both")
 
 
 # k1, k2, k3, k4, k5, k6, k7, k8, k9, k10, k11, \
