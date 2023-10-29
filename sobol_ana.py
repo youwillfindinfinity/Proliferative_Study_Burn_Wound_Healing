@@ -2,27 +2,26 @@ import numpy as np
 from SALib.sample import saltelli
 from SALib.analyze import sobol
 import json
+from param_ranges import boundfunc
 
 
 dt = 1/(60*24)
-dt_hour = 1/60
 # Production Parameters
-k1 = 2.34 * 10**(-5) * dt #2.34 * 10**(-5) * dt *rho2 https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1009839
-k2 = 2.34 * 10**(-5) * dt #2.34 * 10**(-5) * dt  combi model ****
-k3 = 1 * 10**(-5) * dt # 1 * 10**(-5) * dt
-k4 = 8.80 * 10**(-5) * dt # 28.0 * 10**(-5) * dt day combi model *****
-k5 = 0.00001 * dt # 0.00001 * dt
-k6 = 0.0005 * dt # 0.0005 * dt
-k7 = 30 * dt #30 * dt  k1 and k2 between 30-60 https://zero.sci-hub.se/3771/b68709ea5f5640da4199e36ff25ef036/cumming2009.pdf
-k8 = 1 * dt # 1 * dt https://link.springer.com/article/10.1007/s11538-012-9751-z/tables/1
-k9 = 50 * dt # 50 * dt
-k10 = 30 * dt # 30 * dt
-k11 = 20 * dt # 2000000 * dt production of CI forced by myofibroblasts https://www.sciencedirect.com/science/article/pii/S0045782516302857?casa_token=ByHEzHgojSEAAAAA:XNdfPARqEPtiO3rcqb0jo9d--utWdu-swPxNKOLyK5huphzY4TcRxiVo4c4yzCASMY-tOswVpzY#br000425
+# k1 = 2.34 * 10**(-5) * dt #2.34 * 10**(-5) * dt *rho2 https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1009839
+k1 = 2.34 * 10**(-5) * dt #2.34 * 10**(-5) * dt  combi model ****
+k2 = 1 * 10**(-5) * dt # 1 * 10**(-5) * dt
+k3 = 8.80 * 10**(-5) * dt # 28.0 * 10**(-5) * dt day combi model *****
+k4 = 0.00001 * dt # 0.00001 * dt
+k5 = 0.0005 * dt # 0.0005 * dt
+k6 = 30 * dt #30 * dt  k1 and k2 between 30-60 https://zero.sci-hub.se/3771/b68709ea5f5640da4199e36ff25ef036/cumming2009.pdf
+k7 = 1 * dt # 1 * dt https://link.springer.com/article/10.1007/s11538-012-9751-z/tables/1
+k8 = 50 * dt # 50 * dt
+k9 = 30 * dt # 30 * dt
+k10 = 20 * dt # 2000000 * dt production of CI forced by myofibroblasts https://www.sciencedirect.com/science/article/pii/S0045782516302857?casa_token=ByHEzHgojSEAAAAA:XNdfPARqEPtiO3rcqb0jo9d--utWdu-swPxNKOLyK5huphzY4TcRxiVo4c4yzCASMY-tOswVpzY#br000425
 
 # Conversion parameters
 gamma = 10**(-5)
 zeta = 10**(5) # fixed
-f_dillution = 1/16
 
 # Activation parameters
 lambda1 = 100 * dt # 100 * dt https://www.sciencedirect.com/science/article/pii/S0045782516302857?casa_token=ByHEzHgojSEAAAAA:XNdfPARqEPtiO3rcqb0jo9d--utWdu-swPxNKOLyK5huphzY4TcRxiVo4c4yzCASMY-tOswVpzY#br000435
@@ -67,9 +66,11 @@ CI0 = 0.001
 
 
 
+
+bounds = boundfunc("array")
 initial_parameters = {
-      'k1': k1, 'k2': k2, 'k3': k3, 'k4': k4, 'k5': k5, 'k6': k6, 'k7': k7, 'k8': k8, 'k9': k9, 'k10': k10, 'k11': k11,
-      'gamma': gamma,'zeta': zeta, 'f_dillution': f_dillution,
+      'k1': k1, 'k2': k2, 'k3': k3, 'k4': k4, 'k5': k5, 'k6': k6, 'k7': k7, 'k8': k8, 'k9': k9, 'k10': k10,
+      'gamma': gamma,'zeta': zeta,
       'lambda1': lambda1, 'lambda2': lambda2, 'lambda3': lambda3, 'lambda4': lambda4,
       'rho1': rho1, 'rho2': rho2, 'rho3': rho3,
       'mu1': mu1, 'mu2': mu2, 'mu3': mu3, 'mu4': mu4, 'mu5': mu5, 'mu6': mu6, 'mu7': mu7, 'mu8': mu8,
@@ -78,12 +79,11 @@ initial_parameters = {
       'A_MII0': A_MII0, 'I0': I0, 'beta0': beta0, 'A_MC0': A_MC0, 'A_F0': A_F0, 'A_M0': A_M0, 'A_Malpha0': A_Malpha0,
       'CIII0': CIII0, 'CI0': CI0
   }
-parameter_increment = 1e-5
 problem = {
-    'num_vars': len(initial_parameters),
-    'names': list(initial_parameters.keys()),
-    'bounds': [[initial_parameters[param] - parameter_increment, initial_parameters[param] + parameter_increment] for param in initial_parameters]
-}
+        'num_vars': len(initial_parameters),
+        'names': list(initial_parameters.keys()),
+        'bounds': bounds
+    }
 
 with open('model_outputs_scenario1.json', 'r') as f:
     outputs1 = np.array(json.load(f))
