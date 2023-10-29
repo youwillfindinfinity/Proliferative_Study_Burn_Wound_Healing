@@ -90,7 +90,7 @@ with open('model_outputs_scenario1.json', 'r') as f:
 with open('sampled_params.json', 'r') as f:
     param_values_list = json.load(f)
 # # Reshape outputs1 to have dimensions (number of samples, number of outputs)
-outputs1_reshaped = outputs1[:,0,:]
+outputs1_reshaped = outputs1[:,0,0,0,:]
 valout = outputs1_reshaped[:,5]
 
 Sobol_indices_scenario1 = sobol.analyze(problem, valout, print_to_console=True)

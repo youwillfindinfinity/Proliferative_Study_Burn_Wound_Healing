@@ -162,8 +162,9 @@ problem = {
 # print([[initial_parameters[param] - parameter_increment, initial_parameters[param] + parameter_increment] for param in initial_parameters])
 # Check if saved samples exist, if not, generate new samples and save them
 
-param_values = saltelli.sample(problem, 5, calc_second_order=True)
-param_values_list = param_values.tolist()  # Convert NumPy array to list for JSON serialization
+param_values = saltelli.sample(problem, 128, calc_second_order=True)
+param_values_list = param_values.tolist()
+print (len(param_values_list))# Convert NumPy array to list for JSON serialization
 with open('sampled_params.json', 'w') as f:
     json.dump(param_values_list, f)
 
@@ -179,12 +180,8 @@ def model_output(params, cou, totalcou):
     outputs175 = []
     outputs275 = []
     print((cou + 1) / totalcou)
-    for params in param_values:
-        # Convert params to a dictionary with parameter names as keys
-        sampled_params = {param_name: param_value for param_name, param_value in zip(initial_parameters.keys(), params)}
-
     # Time parameters
-    weeks = 1
+    weeks = 30
     n_days_in_week = 7
     t_max = weeks * n_days_in_week  # Maximum simulation time(weeks)
     dt = 1 / (60 * 24)
@@ -196,36 +193,44 @@ def model_output(params, cou, totalcou):
     # print(IM)
 
     # Initialize arrays for results
-    A_MII1 = sampled_params['A_MII0']
-    I1 = sampled_params['I0']
-    beta1 = sampled_params['beta0']
-    A_MC1 = sampled_params['A_MC0']
-    A_F1 = sampled_params['A_F0']
-    A_M1 = sampled_params['A_M0']
-    A_Malpha1 = sampled_params['A_Malpha0']
-    CIII1 = sampled_params['CIII0']
-    CI1 = sampled_params['CI0']
+    allkeys = list(initial_parameters.keys())
+    A_MII1 = params[allkeys.index('A_MII0')]
+    I1 = params[allkeys.index('I0')]
+    beta1 = params[allkeys.index('beta0')]
+    A_MC1 = params[allkeys.index('A_MC0')]
+    A_F1 = params[allkeys.index('A_F0')]
+    A_M1 = params[allkeys.index('A_M0')]
+    A_Malpha1 = params[allkeys.index('A_Malpha0')]
+    CIII1 = params[allkeys.index('CIII0')]
+    CI1 = params[allkeys.index('CI0')]
 
-    A_MII2 = sampled_params['A_MII0']
-    I2 = sampled_params['I0']
-    beta2 = sampled_params['beta0']
-    A_MC2 = sampled_params['A_MC0']
-    A_F2 = sampled_params['A_F0']
-    A_M2 = sampled_params['A_M0']
-    A_Malpha2 = sampled_params['A_Malpha0']
-    CIII2 = sampled_params['CIII0']
-    CI2 = sampled_params['CI0']
+    A_MII2 = params[allkeys.index('A_MII0')]
+    I2 = params[allkeys.index('I0')]
+    beta2 = params[allkeys.index('beta0')]
+    A_MC2 = params[allkeys.index('A_MC0')]
+    A_F2 = params[allkeys.index('A_F0')]
+    A_M2 = params[allkeys.index('A_M0')]
+    A_Malpha2 = params[allkeys.index('A_Malpha0')]
+    CIII2 = params[allkeys.index('CIII0')]
+    CI2 = params[allkeys.index('CI0')]
 
     startinc = 0
+
+    new_params = dict()
+    for inh in range(len(allkeys)):
+        new_params[allkeys[inh]]= params[inh]
+    print(A_MII1, I1, beta1, A_MC1, A_F1, A_M1, A_Malpha1, CIII1, CI1, new_params['k1'])
     # Perform simulation for both scenarios using forward Euler method
     for i in range(0, timesteps + 1):
         t = i * dt
         savetimes = [int(i*timvals) for timvals in [0.25,0.5,0.75,1]]
         # Scenario 1
-        A_MII1, I1, beta1, A_MC1, A_F1, A_M1, A_Malpha1, CIII1, CI1 = scenario1_equations(A_MII1, I1, beta1, A_MC1, A_F1, A_M1, A_Malpha1, CIII1, CI1, sampled_params, dt, t)
+
+
+        A_MII1, I1, beta1, A_MC1, A_F1, A_M1, A_Malpha1, CIII1, CI1 = scenario1_equations(A_MII1, I1, beta1, A_MC1, A_F1, A_M1, A_Malpha1, CIII1, CI1, new_params, dt, t)
 
         # Scenario 2
-        A_MII2, I2, beta2, A_MC2, A_F2, A_M2, A_Malpha2, CIII2, CI2 = scenario2_equations(A_MII2, I2, beta2, A_MC2, A_F2, A_M2, A_Malpha2, CIII2, CI2, sampled_params, dt, t)
+        A_MII2, I2, beta2, A_MC2, A_F2, A_M2, A_Malpha2, CIII2, CI2 = scenario2_equations(A_MII2, I2, beta2, A_MC2, A_F2, A_M2, A_Malpha2, CIII2, CI2, new_params, dt, t)
 
         if i in savetimes:
             if startinc == 0:
@@ -248,24 +253,14 @@ def model_output(params, cou, totalcou):
 
 # Scenario 1
 runningnow = 0
-
+outputs1 = []
+# for i in range(0, len(param_values)):
+#     outputs1.append(model_output(param_values[i], i, len(param_values)))
 outputs1 = [[model_output(params, cou, len(param_values))] for cou, params in enumerate(param_values)]
 with open('model_outputs_scenario1.json', 'w') as f:
-    json.dump(outputs1.tolist(), f)
-runningnow += 1
-print(runningnow)
+    json.dump(np.array(outputs1).tolist(), f)
+
 # Scenario 2
-try:
-    with open('model_outputs_scenario2.json', 'r') as f:
-        outputs2 = np.array(json.load(f))
-    runningnow += 1
-    print(runningnow)
-except FileNotFoundError:
-    outputs2 = np.array([model_output(params, scenario=2) for params in param_values])
-    with open('model_outputs_scenario2.json', 'w') as f:
-        json.dump(outputs2.tolist(), f)
-    runningnow += 1
-    print(runningnow)
 
 # Scenario 1
 # with open('model_outputs_scenario1.json', 'r') as f:
