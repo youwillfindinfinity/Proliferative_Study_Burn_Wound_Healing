@@ -1,8 +1,21 @@
 from main import *
 
 
+# Calculate the change in IL-8 levels attributed to mast cell activity over time
+il8_increase_due_to_mast_cells = []
+
+# Assuming a linear relationship between mast cell activity and IL-8 increase
+for i in range(len(A_MC1[1:])):
+    il8_increase = A_MC1[1:][i] * k6  # Example: 0.1 IL-8 increase for each mast cell
+    il8_increase_due_to_mast_cells.append(il8_increase)
+
+# Calculate the total IL-8 increase attributed to mast cells over the specified time period
+total_il8_increase = sum(il8_increase_due_to_mast_cells)
 
 
+# print(total_il8_increase)
+plt.plot(time[1:], total_il8_increase)
+plt.show()
 # interesting metrics 
 # fibroblast activity
 # collagen type I to type III ratio

@@ -2,15 +2,16 @@ import numpy as np
 import matplotlib.pyplot as plt
 from params import *
 from scipy.integrate import solve_ivp
+from matplotlib.ticker import ScalarFormatter
 
 
-def A_MII1_func(k1, mu1, A_MII0, t):
+def A_MII1_func(mu1, A_MII0, t):
     A_MII1 = np.exp(-mu1 * t) * A_MII0
     return A_MII1 
 
 # a = A_MII1_func(k1, mu1, A_MII0, time)
 
-def A_MII2_func(k1, mu1, A_MII0, omega1, t):
+def A_MII2_func(mu1, A_MII0, omega1, t):
 
     A_MII2 = A_MII0*np.exp(-mu1 * t) * np.cos(omega1 * t)
     return A_MII2 
@@ -23,22 +24,21 @@ def A_Malpha_func(rho2, A_M, A_Malpha0, t):
 dt = 1/(60*24)
 dt_hour = 1/60
 # Production Parameters 
-k1 = 2.34 * 10**(-5) * dt #2.34 * 10**(-5) * dt *rho2 https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1009839
-k2 = 2.34 * 10**(-5) * dt #2.34 * 10**(-5) * dt  combi model ****
-k3 = 1 * 10**(-5) * dt # 1 * 10**(-5) * dt 
-k4 = 8.80 * 10**(-5) * dt # 28.0 * 10**(-5) * dt day combi model *****
-k5 = 0.00001 * dt # 0.00001 * dt
-k6 = 0.0005 * dt # 0.0005 * dt
-k7 = 30 * dt #30 * dt  k1 and k2 between 30-60 https://zero.sci-hub.se/3771/b68709ea5f5640da4199e36ff25ef036/cumming2009.pdf
-k8 = 1 * dt # 1 * dt https://link.springer.com/article/10.1007/s11538-012-9751-z/tables/1
-k9 = 50 * dt # 50 * dt
-k10 = 30 * dt # 30 * dt
-k11 = 20 * dt # 2000000 * dt production of CI forced by myofibroblasts https://www.sciencedirect.com/science/article/pii/S0045782516302857?casa_token=ByHEzHgojSEAAAAA:XNdfPARqEPtiO3rcqb0jo9d--utWdu-swPxNKOLyK5huphzY4TcRxiVo4c4yzCASMY-tOswVpzY#br000425
+# k1 = 2.34 * 10**(-5) * dt #2.34 * 10**(-5) * dt *rho2 https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1009839
+k1 = 2.34 * 10**(-5) * dt #2.34 * 10**(-5) * dt  combi model ****
+k2 = 1 * 10**(-5) * dt # 1 * 10**(-5) * dt 
+k3 = 8.80 * 10**(-5) * dt # 28.0 * 10**(-5) * dt day combi model *****
+k4 = 0.00001 * dt # 0.00001 * dt
+k5 = 0.0005 * dt # 0.0005 * dt
+k6 = 30 * dt #30 * dt  k1 and k2 between 30-60 https://zero.sci-hub.se/3771/b68709ea5f5640da4199e36ff25ef036/cumming2009.pdf
+k7 = 1 * dt # 1 * dt https://link.springer.com/article/10.1007/s11538-012-9751-z/tables/1
+k8 = 50 * dt # 50 * dt
+k9 = 30 * dt # 30 * dt
+k10 = 20 * dt # 2000000 * dt production of CI forced by myofibroblasts https://www.sciencedirect.com/science/article/pii/S0045782516302857?casa_token=ByHEzHgojSEAAAAA:XNdfPARqEPtiO3rcqb0jo9d--utWdu-swPxNKOLyK5huphzY4TcRxiVo4c4yzCASMY-tOswVpzY#br000425
 
 # Conversion parameters
 gamma = 10**(-5) 
 zeta = 10**(5) # fixed
-f_dillution = 1/16 
 
 # Activation parameters
 lambda1 = 100 * dt # 100 * dt https://www.sciencedirect.com/science/article/pii/S0045782516302857?casa_token=ByHEzHgojSEAAAAA:XNdfPARqEPtiO3rcqb0jo9d--utWdu-swPxNKOLyK5huphzY4TcRxiVo4c4yzCASMY-tOswVpzY#br000435
@@ -85,8 +85,8 @@ CI0 = 0.001
 
 
 parameters = {
-      'k1': k1, 'k2': k2, 'k3': k3, 'k4': k4, 'k5': k5, 'k6': k6, 'k7': k7, 'k8': k8, 'k9': k9, 'k10': k10, 'k11': k11,
-      'gamma': gamma,'zeta': zeta, 'f_dillution': f_dillution,
+      'k1': k1, 'k2': k2, 'k3': k3, 'k4': k4, 'k5': k5, 'k6': k6, 'k7': k7, 'k8': k8, 'k9': k9, 'k10': k10, 
+      'gamma': gamma,'zeta': zeta,
       'lambda1': lambda1, 'lambda2': lambda2, 'lambda3': lambda3, 'lambda4': lambda4,
       'rho1': rho1, 'rho2': rho2, 'rho3': rho3,
       'mu1': mu1, 'mu2': mu2, 'mu3': mu3, 'mu4': mu4, 'mu5': mu5, 'mu6': mu6, 'mu7': mu7, 'mu8': mu8,
@@ -99,42 +99,42 @@ parameters = {
 
 # Scenario 1 equations
 def scenario1_equations(A_MII, I, beta, A_MC, A_F, A_M, A_Malpha, CIII, CI, parameters, dt, t):
-    A_MII_next = A_MII1_func(parameters['k1'], parameters['mu1'], parameters['A_MII0'], t)
-    I_next = I + dt  * (-parameters['k2'] * parameters['upsilon1'] * np.exp(-parameters['upsilon1'] * t) + parameters['k6'] * parameters['gamma'] * A_MC - parameters['mu2'] * I)
-    beta_next = beta + dt * (parameters['k3'] * parameters['upsilon2'] * np.exp(parameters['upsilon2'] * t) + parameters['k4'] * parameters['gamma'] * A_MII + parameters['k5'] * parameters['gamma'] * A_MC - parameters['mu3'] * beta)
+    A_MII_next = A_MII1_func(parameters['mu1'], parameters['A_MII0'], t)
+    I_next = I + dt  * (-parameters['k1'] * parameters['upsilon1'] * np.exp(-parameters['upsilon1'] * t) + parameters['k5'] * parameters['gamma'] * A_MC - parameters['mu2'] * I)
+    beta_next = beta + dt * (parameters['k2'] * parameters['upsilon2'] * np.exp(parameters['upsilon2'] * t) + parameters['k3'] * parameters['gamma'] * A_MII + parameters['k4'] * parameters['gamma'] * A_MC - parameters['mu3'] * beta)
     A_MC_next = A_MC + dt * (A_MC * I * parameters['lambda3'] * parameters['zeta'] - parameters['mu4'] * A_MC)
     A_F_next = A_F + dt * (parameters['lambda2'] * parameters['zeta'] * I * A_F + parameters['lambda1'] * parameters['zeta'] * beta * A_F - parameters['rho1'] * A_F - parameters['mu5'] * A_F)
     A_M_next = A_M + dt * (parameters['rho1'] * A_F + parameters['lambda1'] * parameters['zeta'] * beta * A_F + parameters['lambda4'] * parameters['zeta'] * A_F * A_M - parameters['mu6'] * A_M)
     A_Malpha_next = A_Malpha_func(parameters['rho2'], A_M, parameters['A_Malpha0'], t)
-    CIII_next = CIII + dt * (parameters['k7'] * parameters['gamma'] * A_F + parameters['k10'] * parameters['gamma'] * A_M - parameters['rho3'] * CIII - parameters['mu7'] * CIII)
-    CI_next = CI + dt * (parameters['rho3'] * CIII + parameters['k9'] * parameters['gamma'] * A_M + parameters['k4'] * parameters['gamma'] * A_Malpha + parameters['k8'] * parameters['gamma'] * A_F * parameters['k11'] * parameters['gamma'] * A_Malpha - parameters['mu8'] * CI)
+    CIII_next = CIII + dt * (parameters['k6'] * parameters['gamma'] * A_F + parameters['k9'] * parameters['gamma'] * A_M - parameters['rho3'] * CIII - parameters['mu7'] * CIII)
+    CI_next = CI + dt * (parameters['rho3'] * CIII + parameters['k8'] * parameters['gamma'] * A_M + parameters['k3'] * parameters['gamma'] * A_Malpha + parameters['k7'] * parameters['gamma'] * A_F * parameters['k10'] * parameters['gamma'] * A_Malpha - parameters['mu8'] * CI)
     return A_MII_next, I_next, beta_next, A_MC_next, A_F_next, A_M_next, A_Malpha_next, CIII_next, CI_next
 
 # Scenario 2 equations
 def scenario2_equations(A_MII, I, beta, A_MC, A_F, A_M, A_Malpha, CIII, CI, parameters, dt, t):
-    A_MII_next = A_MII2_func(parameters['k1'], parameters['mu1'], parameters['A_MII0'], parameters['omega1'], t)
-    I_next = I + dt  * (-parameters['k2'] * parameters['upsilon3'] * np.exp(-parameters['upsilon3'] * t) * np.cos(parameters['omega2'] * t)
-                       - parameters['k2'] * np.exp(-parameters['upsilon3'] * t) * parameters['omega2'] * np.sin(parameters['omega2'] * t) + parameters['k6'] * parameters['gamma'] * A_MC- parameters['mu2'] * I)
-    beta_next = beta + dt  * (parameters['k3'] * np.exp(-parameters['upsilon4'] * t) * parameters['omega3'] * np.cos(parameters['omega3'] * t)
-                             - parameters['k3'] * parameters['upsilon4'] * np.exp(-parameters['upsilon4'] * t) * np.sin(parameters['omega3'] * t)
-                             + parameters['k4'] * parameters['gamma'] * A_MII + parameters['k5'] * parameters['gamma'] * A_MC - parameters['mu3'] * beta)
+    A_MII_next = A_MII2_func(parameters['mu1'], parameters['A_MII0'], parameters['omega1'], t)
+    I_next = I + dt  * (-parameters['k1'] * parameters['upsilon3'] * np.exp(-parameters['upsilon3'] * t) * np.cos(parameters['omega2'] * t)
+                       - parameters['k1'] * np.exp(-parameters['upsilon3'] * t) * parameters['omega2'] * np.sin(parameters['omega2'] * t) + parameters['k5'] * parameters['gamma'] * A_MC- parameters['mu2'] * I)
+    beta_next = beta + dt  * (parameters['k2'] * np.exp(-parameters['upsilon4'] * t) * parameters['omega3'] * np.cos(parameters['omega3'] * t)
+                             - parameters['k2'] * parameters['upsilon4'] * np.exp(-parameters['upsilon4'] * t) * np.sin(parameters['omega3'] * t)
+                             + parameters['k3'] * parameters['gamma'] * A_MII + parameters['k4'] * parameters['gamma'] * A_MC - parameters['mu3'] * beta)
     A_MC_next = A_MC + dt * (A_MC * I * parameters['lambda3'] * parameters['zeta'] - parameters['mu4'] * A_MC)
     A_F_next = A_F + dt * (parameters['lambda2'] * parameters['zeta'] * I * A_F - parameters['lambda1'] * parameters['zeta'] * beta * A_F - parameters['rho1'] * A_F - parameters['mu5'] * A_F)
     A_M_next = A_M + dt * (parameters['rho1'] * A_F + parameters['lambda1'] * parameters['zeta'] * beta * A_F + parameters['lambda4'] * parameters['zeta'] * A_F * A_M - parameters['mu6'] * A_M)
     A_Malpha_next = A_Malpha_func(parameters['rho2'], A_M, parameters['A_Malpha0'], t)
-    CIII_next = CIII + dt * (parameters['k7'] * parameters['gamma'] * A_F + parameters['k10'] * parameters['gamma'] * A_M - parameters['rho3'] * CIII - parameters['mu7'] * CIII)
-    CI_next = CI + dt * (parameters['rho3'] * CIII + parameters['k9'] * parameters['gamma'] * A_M + parameters['k4'] * parameters['gamma'] * A_Malpha + parameters['k8'] * parameters['gamma'] * A_F * parameters['k11'] * parameters['gamma'] * A_Malpha - parameters['mu8'] * CI)
+    CIII_next = CIII + dt * (parameters['k6'] * parameters['gamma'] * A_F + parameters['k9'] * parameters['gamma'] * A_M - parameters['rho3'] * CIII - parameters['mu7'] * CIII)
+    CI_next = CI + dt * (parameters['rho3'] * CIII + parameters['k8'] * parameters['gamma'] * A_M + parameters['k3'] * parameters['gamma'] * A_Malpha + parameters['k7'] * parameters['gamma'] * A_F * parameters['k10'] * parameters['gamma'] * A_Malpha - parameters['mu8'] * CI)
     return A_MII_next, I_next, beta_next, A_MC_next, A_F_next, A_M_next, A_Malpha_next, CIII_next, CI_next
 
 # Time parameters
-weeks = 55
+weeks = 30
 n_days_in_week = 7
 t_max =  weeks * n_days_in_week # Maximum simulation time(weeks)
-# dt = 0.001 # Time step
 
 # Forward Euler method
 timesteps = int(t_max/dt)
 time = np.linspace(0, t_max, timesteps)
+# print(time)
 # print(time, len(time))
 # print(IM)
 
@@ -188,7 +188,7 @@ for i in range(1, timesteps + 1):
     A_Malpha2.append(A_Malpha_next)
     CIII2.append(CIII_next)
     CI2.append(CI_next)
-    
+# print(A_MII1[0:5])
 # # Create subplots
 # plt.figure(figsize=(12, 6))
 
@@ -255,219 +255,98 @@ for i in range(1, timesteps + 1):
 # A_MII2, I2, beta2, A_MC2, A_F2, A_M2, A_Malpha2, CIII2, CI2 = y_scenario1
 
 def plots_fe(scenario_nr):
+    plt.figure(figsize=(12, 6))
 
-
-    # Plotting concentrations of cytokines, proteins, and cell counts for agents separately for each scenario
-    plt.figure(figsize=(15, 12))
     if scenario_nr == "1" or scenario_nr == "both":
         # Scenario 1
-        plt.subplot(3, 3, 1)
-        plt.plot(time, I1[1:], label=r'$IL-8$(Scenario 1)')
-        plt.legend()
-        plt.title('IL-8 concentration over time')
-        plt.xlabel('Time')
-        plt.ylabel('Concentration')
+        ax1 = plt.subplot(2, 2, 1)
+        ax1.plot(time, A_MII1[1:], label=r'$A_{MII}$(Sc.1)', c="darkblue")
+        ax1.plot(time, A_MC1[1:], label=r'$A_{MC}$(Sc.1)', c="orange")
+        ax1.legend(loc="lower left", ncol=2)
+        ax1.set_ylabel('Cell count')
+        ax1.set_xticks([])  # Turn off x-axis labels
 
-        plt.subplot(3, 3, 2)
-        plt.plot(time, beta1[1:], label=r'$TGF-\beta1$(Scenario 1)')
-        plt.legend()
-        plt.title(r'TGF-$\beta1$ concentration over time')
-        plt.xlabel('Time')
-        plt.ylabel('Concentration')
+        ax2 = plt.subplot(2, 2, 2)
+        ax2.plot(time, A_F1[1:], label=r'$A_{F}$(Sc.1)', c="black")
+        ax2.plot(time, A_Malpha1[1:], label=r'$A_{M\alpha}$(Sc.1)', c="lightsteelblue")
+        ax2.legend(loc="upper right", ncol=2)
+        ax2.set_xticks([])  # Turn off x-axis labels
 
-        plt.subplot(3, 3, 3)
-        plt.plot(time, A_MII1[1:], label=r'$A_{MII}$(Scenario 1)')
-        plt.legend()
-        plt.title(r'$A_{MII}$ cell count over time')
-        plt.xlabel('Time')
-        plt.ylabel('Count')
+        ax3 = plt.subplot(2, 2, 3)
+        ax3.plot(time, I1[1:], label=r'$IL-8$(Sc.1)', c="red")
+        ax3.plot(time, beta1[1:], label=r'$TGF-\beta1$(Sc.1)', c="blue")
+        ax3.legend(loc="lower right", ncol=2)
+        ax3.set_xlabel('Time(days)')
+        ax3.set_ylabel('Chemokine Concentration')
 
-        plt.subplot(3, 3, 4)
-        plt.plot(time, A_MC1[1:], label=r'$A_{MC}$(Scenario 1)')
-        plt.legend()
-        plt.title(r'$A_{MC}$ cell count over time')
-        plt.xlabel('Time')
-        plt.ylabel('Count')
+        ax4 = plt.subplot(2, 2, 4)
+        ax4.plot(time, CIII1[1:], label=r'$C_{III}(Sc.1)$', c="lightgreen")
+        ax4.plot(time, CI1[1:], label=r'$C_I$(Sc.1)', c="green")
+        ax4.legend(loc="upper left", ncol=2)
+        ax4.set_xlabel('Time(days)')
 
-        plt.subplot(3, 3, 5)
-        plt.plot(time, A_F1[1:], label=r'$A_{F}$(Scenario 1)')
-        plt.legend()
-        plt.title(r'$A_{F}$ cell count over time')
-        plt.xlabel('Time')
-        plt.ylabel('Count')
+        # Set y-labels on the right side for subplots on the right
+        ax2.yaxis.set_label_position("right")
+        ax4.yaxis.set_label_position("right")
+        ax2.set_ylabel('Cell count')
+        ax4.set_ylabel('Collagen Concentration')
 
+        # Add ticks and y values to the right for subplots on the right
+        ax2.yaxis.tick_right()
+        ax4.yaxis.tick_right()
 
-        plt.subplot(3, 3, 6)
-        plt.plot(time, A_M1[1:], label=r'$A_M$(Scenario 1)')
-        plt.legend()
-        plt.title(r'$A_M$ cell count over time')
-        plt.xlabel('Time')
-        plt.ylabel('Count')
-
-
-        plt.subplot(3, 3, 7)
-        plt.plot(time, A_Malpha1[1:], label=r'$A_{M\alpha}$(Scenario 1)')
-        plt.legend()
-        plt.title(r'$A_{M\alpha}$ cell count over time')
-        plt.xlabel('Time')
-        plt.ylabel('Count')
-
-        plt.subplot(3, 3, 8)
-        plt.plot(time, CIII1[1:], label=r'$C_{III}(Scenario 1)$')
-        plt.legend()
-        plt.title(r'$C_{III}$ concentration over time ')
-        plt.xlabel('Time')
-        plt.ylabel('Concentration')
-
-
-        plt.subplot(3, 3, 9)
-        plt.plot(time, CI1[1:], label=r'$C_I$(Scenario 1)')
-        plt.legend()
-        plt.title(r'$C_I$ concentration over time')
-        plt.xlabel('Time')
-        plt.ylabel('Concentration')
-
-       
-
-        
-#     # print(A_MII2)
-#     # print(AM)
     if scenario_nr == "2" or scenario_nr == "both":
         # Scenario 2
-        plt.subplot(3, 3, 1)
-        plt.plot(time, I2[1:], label=r'$IL-8$(Scenario 2)')
-        plt.legend()
-        plt.xlabel('Time')
-        plt.ylabel('Concentration')
+        ax1 = plt.subplot(2, 2, 1)
+        ax1.plot(time, A_MII2[1:], label=r'$A_{MII}$(Sc.2)', c="darkblue", linestyle="dotted")
+        ax1.plot(time, A_MC2[1:], label=r'$A_{MC}$(Sc.2)', c="orange", linestyle="dotted")
+        ax1.legend(loc="lower left", ncol=2)
+        ax1.set_ylabel('Cell count')
+        ax1.set_xticks([])  # Turn off x-axis labels
 
-        plt.subplot(3, 3, 2)
-        plt.plot(time, beta2[1:], label=r'$TGF-\beta1$(Scenario 2)')
-        plt.legend()
-        plt.xlabel('Time')
-        plt.ylabel('Concentration')
+        ax2 = plt.subplot(2, 2, 2)
+        ax2.plot(time, A_F2[1:], label=r'$A_{F}$(Sc.2)', c="black", linestyle="dotted")
+        ax2.plot(time, A_Malpha2[1:], label=r'$A_{M\alpha}$(Sc.2)', c="lightsteelblue", linestyle="dotted")
+        ax2.legend(loc="upper right", ncol=2)
+        ax2.set_xticks([])  # Turn off x-axis labels
 
-        plt.subplot(3, 3, 3)
-        plt.plot(time, A_MII2[1:], label=r'$A_{MII}$(Scenario 2)')
-        plt.legend()
-        plt.xlabel('Time')
-        plt.ylabel('Count')
+        ax3 = plt.subplot(2, 2, 3)
+        ax3.plot(time, I2[1:], label=r'$IL-8$(Sc.2)', c="red", linestyle="dotted")
+        ax3.plot(time, beta2[1:], label=r'$TGF-\beta1$(Sc.2)', c="blue", linestyle="dotted")
+        ax3.legend(loc="lower right", ncol=2)
+        ax3.set_xlabel('Time(days)')
+        ax3.set_ylabel('Chemokine Concentration')
 
-        plt.subplot(3, 3, 4)
-        plt.plot(time, A_MC2[1:], label=r'$A_{MC}$(Scenario 2)')
-        plt.legend()
-        plt.xlabel('Time')
-        plt.ylabel('Count')
+        ax4 = plt.subplot(2, 2, 4)
+        ax4.plot(time, CIII2[1:], label=r'$C_{III}(Sc.2)$', c="lightgreen", linestyle="dotted")
+        ax4.plot(time, CI2[1:], label=r'$C_{I}$(Sc.2)', c="green", linestyle="dotted")
+        ax4.legend(loc="upper left", ncol=2)
+        ax4.set_xlabel('Time(days)')
 
-        plt.subplot(3, 3, 5)
-        plt.plot(time, A_F2[1:], label=r'$A_{F}$(Scenario 2)')
-        plt.legend()
-        plt.title(r'$A_{F}$ cell count over time')
-        plt.xlabel('Time')
-        plt.ylabel('Count')
-        plt.subplot(3, 3, 6)
-        plt.plot(time, A_M2[1:], label=r'$A_M$(Scenario 2)')
-        plt.legend()
-        plt.xlabel('Time')
-        plt.ylabel('Count')
+        # Set y-labels on the right side for subplots on the right
+        ax2.yaxis.set_label_position("right")
+        ax4.yaxis.set_label_position("right")
+        ax2.set_ylabel('Cell count')
+        ax4.set_ylabel('Collagen Concentration')
 
-        plt.subplot(3, 3, 7)
-        plt.plot(time, A_Malpha2[1:], label=r'$A_{M\alpha}$(Scenario 2)')
-        plt.legend()
-        plt.xlabel('Time')
-        plt.ylabel('Count')
-
-        plt.subplot(3, 3, 8)
-        plt.plot(time, CIII2[1:], label=r'$C_{III}$(Scenario 2)')
-        plt.legend()
-        plt.xlabel('Time')
-        plt.ylabel('Concentration')
-
-        plt.subplot(3, 3, 9)
-        plt.plot(time, CI2[1:], label=r'$C_{I}$(Scenario 2)')
-        plt.legend()
-        plt.xlabel('Time')
-        plt.ylabel('Concentration')
-
-       
+        # Add ticks and y values to the right for subplots on the right
+        ax2.yaxis.tick_right()
+        ax4.yaxis.tick_right()
 
 
-    if scenario_nr == "diff":
-        # Scenario 1
-        plt.subplot(3, 3, 1)
-        plt.plot(time, np.asarray(I1[1:]) - np.asarray(I2[1:]) , label=r'$IL-8$(Scenario 1)')
-        plt.legend()
-        plt.title('IL-8 concentration over time')
-        plt.xlabel('Time')
-        plt.ylabel('Concentration')
+         # Set y-labels on the right side for subplots on the right
+        ax3.yaxis.set_label_position("left")
+        ax3.set_ylabel('Chemokine Concentration')
 
-        plt.subplot(3, 3, 2)
-        plt.plot(time, np.asarray(beta1[1:]) - np.asarray(beta2[1:]), label=r'$TGF-\beta1$(Scenario 1)')
-        plt.legend()
-        plt.title(r'TGF-$\beta1$ concentration over time')
-        plt.xlabel('Time')
-        plt.ylabel('Concentration')
-
-        plt.subplot(3, 3, 3)
-        plt.plot(time, np.asarray(A_MII1[1:]) - np.asarray(A_MII2[1:]), label=r'$A_{MII}$(Scenario 1)')
-        plt.legend()
-        plt.title(r'$A_{MII}$ cell count over time')
-        plt.xlabel('Time')
-        plt.ylabel('Count')
-
-        plt.subplot(3, 3, 4)
-        plt.plot(time, np.asarray(A_MC1[1:]) - np.asarray(A_MC2[1:]), label=r'$A_{MC}$(Scenario 1)')
-        plt.legend()
-        plt.title(r'$A_{MC}$ cell count over time')
-        plt.xlabel('Time')
-        plt.ylabel('Count')
-
-        plt.subplot(3, 3, 5)
-        plt.plot(time, np.asarray(A_F1[1:]) - np.asarray(A_F2[1:]), label=r'$A_{F}$(Scenario 1)')
-        plt.legend()
-        plt.title(r'$A_{F}$ cell count over time')
-        plt.xlabel('Time')
-        plt.ylabel('Count')
-
-
-        plt.subplot(3, 3, 6)
-        plt.plot(time, np.asarray(A_M1[1:]) - np.asarray(A_M2[1:]), label=r'$A_M$(Scenario 1)')
-        plt.legend()
-        plt.title(r'$A_M$ cell count over time')
-        plt.xlabel('Time')
-        plt.ylabel('Count')
-
-        plt.subplot(3, 3, 7)
-        plt.plot(time, np.asarray(A_Malpha1[1:]) - np.asarray(A_Malpha2[1:]), label=r'$A_{M\alpha}$(Scenario 1)')
-        plt.legend()
-        plt.title(r'$A_{M\alpha}$ cell count over time')
-        plt.xlabel('Time')
-        plt.ylabel('Count')
-
-        plt.subplot(3, 3, 8)
-        plt.plot(time, np.asarray(CIII1[1:]) - np.asarray(CIII2[1:]), label=r'$C_{III}(Scenario 1)$')
-        plt.legend()
-        plt.title(r'$C_{III}$ concentration over time ')
-        plt.xlabel('Time')
-        plt.ylabel('Concentration')
-
-        plt.subplot(3, 3, 9)
-        plt.plot(time, np.asarray(CI1[1:]) - np.asarray(CI2[1:]), label=r'$C_I$(Scenario 1)')
-        plt.legend()
-        plt.title(r'$C_I$ concentration over time')
-        plt.xlabel('Time')
-        plt.ylabel('Concentration')
-
-       
-
-       
-
-
-
+        # Format y-axis labels in scientific notation with specified format
+        ax3.yaxis.set_major_formatter(ScalarFormatter(useMathText=True))
+        ax3.ticklabel_format(axis='y', style='sci', scilimits=(0,0))
     plt.tight_layout()
-    plt.savefig('simulation_{}'.format(scenario_nr), dpi = 300)
+    plt.savefig('simulation_{}'.format(scenario_nr), dpi=300)
     plt.show()
 
-# plots_fe("both")
+# Call the function with scenario_nr set to "both"
+plots_fe("both")
 
 
 # k1, k2, k3, k4, k5, k6, k7, k8, k9, k10, k11, \
