@@ -1,18 +1,15 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from params import *
-from scipy.integrate import solve_ivp
-from matplotlib.ticker import ScalarFormatter
+
 
 
 def A_MII1_func(mu1, A_MII0, t):
     A_MII1 = np.exp(-mu1 * t) * A_MII0
     return A_MII1 
 
-# a = A_MII1_func(k1, mu1, A_MII0, time)
 
 def A_MII2_func(mu1, A_MII0, omega1, t):
-
     A_MII2 = A_MII0*np.exp(-mu1 * t) * np.cos(omega1 * t)
     return A_MII2 
 
@@ -24,51 +21,50 @@ def A_Malpha_func(rho2, A_M, A_Malpha0, t):
 dt = 1/(60*24)
 dt_hour = 1/60
 # Production Parameters 
-# k1 = 2.34 * 10**(-5) * dt #2.34 * 10**(-5) * dt *rho2 https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1009839
-k1 = 2.34 * 10**(-5) * dt #2.34 * 10**(-5) * dt  combi model ****
-k2 = 1 * 10**(-5) * dt # 1 * 10**(-5) * dt 
-k3 = 8.80 * 10**(-5) * dt # 28.0 * 10**(-5) * dt day combi model *****
-k4 = 0.00001 * dt # 0.00001 * dt
-k5 = 0.0005 * dt # 0.0005 * dt
-k6 = 30 * dt #30 * dt  k1 and k2 between 30-60 https://zero.sci-hub.se/3771/b68709ea5f5640da4199e36ff25ef036/cumming2009.pdf
-k7 = 1 * dt # 1 * dt https://link.springer.com/article/10.1007/s11538-012-9751-z/tables/1
-k8 = 50 * dt # 50 * dt
-k9 = 30 * dt # 30 * dt
-k10 = 20 * dt # 2000000 * dt production of CI forced by myofibroblasts https://www.sciencedirect.com/science/article/pii/S0045782516302857?casa_token=ByHEzHgojSEAAAAA:XNdfPARqEPtiO3rcqb0jo9d--utWdu-swPxNKOLyK5huphzY4TcRxiVo4c4yzCASMY-tOswVpzY#br000425
+k1 = 2.34 * 10**(-5) * dt 
+k2 = 1 * 10**(-5) * dt 
+k3 = 8.80 * 10**(-5) * dt 
+k4 = 0.00001 * dt 
+k5 = 0.0005 * dt 
+k6 = 30 * dt 
+k7 = 1 * dt 
+k8 = 50 * dt 
+k9 = 30 * dt 
+k10 = 20 * dt 
 
 # Conversion parameters
 gamma = 10**(-5) 
-zeta = 10**(5) # fixed
+zeta = 10**(5) 
 
-# Activation parameters
-lambda1 = 100 * dt # 100 * dt https://www.sciencedirect.com/science/article/pii/S0045782516302857?casa_token=ByHEzHgojSEAAAAA:XNdfPARqEPtiO3rcqb0jo9d--utWdu-swPxNKOLyK5huphzY4TcRxiVo4c4yzCASMY-tOswVpzY#br000435
-lambda2 = 400 * dt # 400 * dt
-lambda3 = 300 * dt # 300 * dt
-lambda4 = 10**(-7) * dt # 10**(-7) * dt 
+# Increase in proliferation parameters
+lambda1 = 100 * dt 
+lambda2 = 400 * dt 
+lambda3 = 300 * dt 
+lambda4 = 10**(-7) * dt 
 
 # Transition parameters
 rho1 = 5 * dt
 rho2 = 3 * dt
-rho3 = 18 * dt # transition CIII to CI
+rho3 = 18 * dt 
 
 # # Decay parameters
-mu1 = 2 * dt # 2 * dt# day-1 mu_AM https://link.springer.com/article/10.1186/1471-2105-14-S6-S7/tables/2
-mu2 = 12 * dt # 12 * dt  day-1 mu_CH https://link.springer.com/article/10.1186/1471-2105-14-S6-S7/tables/2
-mu3 = 10 * dt # 10 * dt
-mu4 = 11 * dt # 11 * dt
-mu5 = 10 * dt # 10 * dt day https://link.springer.com/article/10.1007/s11538-012-9751-z/tables/1
-mu6 = 10 * dt # 10 * dt
-mu7 = 5 * dt # 9.7 * 10**(-5) * dt https://www.sciencedirect.com/science/article/pii/S0045782516302857?casa_token=ByHEzHgojSEAAAAA:XNdfPARqEPtiO3rcqb0jo9d--utWdu-swPxNKOLyK5huphzY4TcRxiVo4c4yzCASMY-tOswVpzY#br000475
-mu8 = 1 * dt # 9.7 * 10**(-5) * dthttps://www.sciencedirect.com/science/article/pii/S0045782516302857?casa_token=ByHEzHgojSEAAAAA:XNdfPARqEPtiO3rcqb0jo9d--utWdu-swPxNKOLyK5huphzY4TcRxiVo4c4yzCASMY-tOswVpzY#br000475
+mu1 = 2 * dt 
+mu2 = 12 * dt 
+mu3 = 10 * dt 
+mu4 = 11 * dt 
+mu5 = 10 * dt 
+mu6 = 10 * dt 
+mu7 = 5 * dt 
+mu8 = 1 * dt 
 
 # sinusoidal parameters
-upsilon1 = -0.001 #-0.001 # negative value
-upsilon2 = -0.1 # -0.1 
-upsilon3 = 0.001 # 0.0000001
-upsilon4 = 0.001 # 0.0001
-omega1 = 1*np.pi *dt # 1*np.pi *dt 
-omega2 = 100*np.pi *dt #80*np.pi *dt
-omega3 = 80*np.pi *dt #120*np.pi *dt
+upsilon1 = -0.001 # negative value
+upsilon2 = -0.1 # positive or negative
+upsilon3 = 0.001 
+upsilon4 = 0.001
+omega1 = 1*np.pi *dt 
+omega2 = 100*np.pi *dt 
+omega3 = 80*np.pi *dt 
 
 # Initial conditions
 A_MII0 = 1000
@@ -99,6 +95,9 @@ parameters = {
 
 # Scenario 1 equations
 def scenario1_equations(A_MII, I, beta, A_MC, A_F, A_M, A_Malpha, CIII, CI, parameters, dt, t):
+    '''
+    Solves step dt for each of the equations in scenario 1
+    '''
     A_MII_next = A_MII1_func(parameters['mu1'], parameters['A_MII0'], t)
     I_next = I + dt  * (-parameters['k1'] * parameters['upsilon1'] * np.exp(-parameters['upsilon1'] * t) + parameters['k5'] * parameters['gamma'] * A_MC - parameters['mu2'] * I)
     beta_next = beta + dt * (parameters['k2'] * parameters['upsilon2'] * np.exp(parameters['upsilon2'] * t) + parameters['k3'] * parameters['gamma'] * A_MII + parameters['k4'] * parameters['gamma'] * A_MC - parameters['mu3'] * beta)
@@ -112,6 +111,9 @@ def scenario1_equations(A_MII, I, beta, A_MC, A_F, A_M, A_Malpha, CIII, CI, para
 
 # Scenario 2 equations
 def scenario2_equations(A_MII, I, beta, A_MC, A_F, A_M, A_Malpha, CIII, CI, parameters, dt, t):
+    '''
+    Solves step dt for each of the equations in scenario 2
+    '''
     A_MII_next = A_MII2_func(parameters['mu1'], parameters['A_MII0'], parameters['omega1'], t)
     I_next = I + dt  * (-parameters['k1'] * parameters['upsilon3'] * np.exp(-parameters['upsilon3'] * t) * np.cos(parameters['omega2'] * t)
                        - parameters['k1'] * np.exp(-parameters['upsilon3'] * t) * parameters['omega2'] * np.sin(parameters['omega2'] * t) + parameters['k5'] * parameters['gamma'] * A_MC- parameters['mu2'] * I)
@@ -134,9 +136,6 @@ t_max =  weeks * n_days_in_week # Maximum simulation time(weeks)
 # Forward Euler method
 timesteps = int(t_max/dt)
 time = np.linspace(0, t_max, timesteps)
-# print(time)
-# print(time, len(time))
-# print(IM)
 
 # Initialize arrays for results
 A_MII1 = [A_MII0]
@@ -188,73 +187,12 @@ for i in range(1, timesteps + 1):
     A_Malpha2.append(A_Malpha_next)
     CIII2.append(CIII_next)
     CI2.append(CI_next)
-# print(A_MII1[0:5])
-# # Create subplots
-# plt.figure(figsize=(12, 6))
 
-# # Subplot 1
-# plt.subplot(1, 2, 1)
-# # plt.plot(time, np.array(A_MC1[1:]), label="A_MC1", c='blue')
-# # plt.plot(time, np.array(A_MC2[1:]), label="A_MC2", c='lightblue')
-# plt.plot(time, np.array(A_MC1[1:]), label="A_MC1")
-# plt.plot(time, np.array(A_MC2[1:]), label="A_MC2")
-# plt.legend()
-# plt.title('Subplot 1')
-# plt.xlabel('Time')
-# plt.ylabel('Values')
-
-# # Subplot 2
-# plt.subplot(1, 2, 2)
-# # plt.plot(time, np.array(A_F1[1:]), label="F1", c='red')
-# # plt.plot(time, np.array(A_F2[1:]), label="F2", c='orange')
-# plt.plot(time, np.array(A_F1[1:]), label="F1")
-# plt.plot(time, np.array(A_F2[1:]), label="F2")
-# plt.legend()
-# plt.title('Subplot 2')
-# plt.xlabel('Time')
-# plt.ylabel('Values')
-
-
-# # Adjust layout
-# plt.tight_layout()
-
-# # Show the plots
-# plt.show()
-
-# # Time parameters
-# weeks = 30
-# n_days_in_week = 7
-# t_max =  weeks * n_days_in_week # Maximum simulation time(weeks)
-# dt = weeks/t_max # Time step
-
-# # Forward Euler method
-# timesteps = int(t_max / dt)
-# time = np.linspace(0, t_max, timesteps)
-
-# # Initial conditions
-# t_span = [0, time[-1]]  # Specify the time span for integration
-
-# def scenario1(t, y):
-#     A_MII, I, beta, A_MC, A_F, A_M, A_Malpha, CIII, CI = y
-#     return scenario1_equations(A_MII, I, beta, A_MC, A_F, A_M, A_Malpha, CIII, CI, t)
-
-# def scenario2(t, y):
-#     A_MII, I, beta, A_MC, A_F, A_M, A_Malpha, CIII, CI = y
-#     return scenario2_equations(A_MII, I, beta, A_MC, A_F, A_M, A_Malpha, CIII, CI, t)
-
-# y0 = [A_MII0, I0, beta0, A_MC0, A_F0, A_M0, A_Malpha0, CIII0, CI0]
-# sol_scenario1 = solve_ivp(scenario1, t_span, y0, method='RK45', dense_output=True)
-# sol_scenario2 = solve_ivp(scenario2, t_span, y0, method='RK45', dense_output=True)
-
-
-# y_scenario1 = sol_scenario1.sol(time)
-# y_scenario2 = sol_scenario2.sol(time)
-
-
-# A_MII1, I1, beta1, A_MC1, A_F1, A_M1, A_Malpha1, CIII1, CI1 = y_scenario1
-# A_MII2, I2, beta2, A_MC2, A_F2, A_M2, A_Malpha2, CIII2, CI2 = y_scenario1
 
 def plots_fe(scenario_nr):
+    '''
+    Plots the results from each list
+    '''
     plt.figure(figsize=(12, 6))
 
     if scenario_nr == "1" or scenario_nr == "both":
@@ -333,7 +271,6 @@ def plots_fe(scenario_nr):
         ax2.yaxis.tick_right()
         ax4.yaxis.tick_right()
 
-
          # Set y-labels on the right side for subplots on the right
         ax3.yaxis.set_label_position("left")
         ax3.set_ylabel('Chemokine Concentration')
@@ -345,31 +282,6 @@ def plots_fe(scenario_nr):
     plt.savefig('simulation_{}'.format(scenario_nr), dpi=300)
     plt.show()
 
-# Call the function with scenario_nr set to "both"
+# Call the function with scenario_nr set to "both" or any scenario
 plots_fe("both")
-
-
-# k1, k2, k3, k4, k5, k6, k7, k8, k9, k10, k11, \
-# gamma, zeta, f_dillution, lambda1, lambda2, lambda3,\
-# lambda4, rho1, rho2, rho3, mu1, mu2, mu3, mu4, mu5, \
-# mu6, mu7, mu8, upsilon1, upsilon2, upsilon3, upsilon4, \
-# omega1, omega2, omega3, A_MII0, I0, beta0, A_MC0, A_F0, \
-# A_M0, A_Malpha0, CIII0, CI0 = 1.439119910008026, 3.3728020021867753, 1.4399999155221739, 4.023532898817432, 1.44, 1.44, 5.0, 5.0, 1.44, 1.44, 1.44, 0.0, -0.04162089475089391, 0.07462911254921226, 0.09999949313304642, 0.14399780357653444, 0.143973473962762, 0.14400000000000002, 0.21711248482614182, 0.14400000000000002, 0.14400000000000002, 0.1479723163153072, 1.0000016895565214, 0.14400000000000002, 0.007131564248382544, 0.061275680627146015, 0.14400000000000002, 0.14400000000000002, 0.14400000000000002, 0.14400000000000002, 1000.0, 1e-06, 1e-06, 0.5002137730367664, 0.6932530570060584, 0.6096239485272107, 1e-06, 1e-06, 4.886424078097683e-11, 5.63958642747979, 5.738349200502124, 6.283185307179586, 1e-05, 1e-05, 0.0625
-
-
-
-#1.439119910008026, 3.3728020021867753, 1.4399999155221739, 4.023532898817432, 1.44, 1.44, 5.0, 5.0, 1.44, 1.44, 1.44, 0.0, -0.04162089475089391, 0.07462911254921226, 0.09999949313304642, 0.14399780357653444, 0.143973473962762, 0.14400000000000002, 0.21711248482614182, 0.14400000000000002, 0.14400000000000002, 0.1479723163153072, 1.0000016895565214, 0.14400000000000002, 0.007131564248382544, 0.061275680627146015, 0.14400000000000002, 0.14400000000000002, 0.14400000000000002, 0.14400000000000002, 1000.0, 1e-06, 1e-06, 0.5002137730367664, 0.6932530570060584, 0.6096239485272107, 1e-06, 1e-06, 4.886424078097683e-11, 5.63958642747979, 5.738349200502124, 6.283185307179586, 1e-05, 1e-05, 0.0625
-
-# # Initial conditions
-# A_MII0 = 1000
-# I0 = 10**(-9) #
-# beta0 = 10**(-7) #
-# A_MC0 = 1000
-# A_F0 = 600
-# A_M0 = 50
-# A_Malpha0 = 0
-# CIII0 = 0
-# CI0 = 0
-# lambda1, lambda2, k1, mu1, omega1, lambda3, lambda4, mu5, rho1, k2, mu2, k7, k8, rho3, k10 = 25, 25, 10000, 0.1, 0.007, 5, 0.10, 0.000001, 0.01, 0.01, 1, 10, 10, 1, 1
-
 
