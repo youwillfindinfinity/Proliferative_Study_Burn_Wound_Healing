@@ -152,17 +152,7 @@ dmypy.json
 # Cython debug symbols
 cython_debug/
 
-/sensitivity_results
-/timeseriesanalysis
-/plots
 
-
-parameter_results_1.json
-correlation_matrix_1.json
-parameter_results_2.json
-correlation_matrix_2.json
-sensitivity_coefficients_1.json
-sensitivity_results.json
 # PyCharm
 #  JetBrains specific template is maintained in a separate JetBrains.gitignore that can
 #  be found at https://github.com/github/gitignore/blob/main/Global/JetBrains.gitignore
