@@ -26,13 +26,13 @@ Email: v.s.muniraj@uva.nl
 **Keywords:**  
 Local Burn wound healing, Proliferative phase, Computational modeling, Continuous model, ODE
 
-This paper will be submitted for the *7th International Workshop on Computational Methods for the Immune System Function (CMISF 2023)*.
+This paper was submitted for the *7th International Workshop on Computational Methods for the Immune System Function (CMISF 2023)*.
 
 ![Image](https://github.com/youwillfindinfinity/Proliferative_Study_Burn_Wound_Healing/blob/a5ff554d89c1606846644c4b69ed6a89ecc0d779/Results/Figure3(e-h).png)
 
 ## Abstract
 
-Understanding the dynamic processes that underlieburn wound healing is a complex endeavor that requires advanced computational approaches. The proliferative phase in burn wounds is critical for the closure of the burn wound. We present a novel model that uses a set of coupled ordinary differential equations that predict intricate interactions between different cell types, cytokines, growth factors, and proteins during the proliferative phase of wound healing after burn injury. We simulated the model for 30 weeks and were able to predict cell and molecular dynamics in this intricate phase of burn wound healing. We achieved biologically sensible results and were able to identify fibroblasts, myofibroblasts, and collagen types III and I as crucial parameters that drive the proliferative phase in burn wounds.
+Understanding the dynamic processes that underlie burn wound healing is a complex endeavor that requires advanced computational approaches. The proliferative phase in burn wounds is critical for the closure of the burn wound. We present a novel model that uses a set of coupled ordinary differential equations that predict intricate interactions between different cell types, cytokines, growth factors, and proteins during the proliferative phase of wound healing after burn injury. We simulated the model for 30 weeks and were able to predict cell and molecular dynamics in this intricate phase of burn wound healing. We achieved biologically sensible results and were able to identify fibroblasts, myofibroblasts, and collagen types III and I as crucial parameters that drive the proliferative phase in burn wounds.
 
 ## Software Implementation
 
