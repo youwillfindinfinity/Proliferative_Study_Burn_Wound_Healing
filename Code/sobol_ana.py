@@ -4,9 +4,14 @@ from SALib.analyze import sobol
 import json
 from param_ranges import boundfunc
 import pickle
+import os
+
+
+# Create a directory to store pickle files
+output_folder = "Sobol_analysis"
+os.makedirs(output_folder, exist_ok=True)
 
 dt = 1/(60*24)
-dt_hour = 1/60
 # Production Parameters 
 k1 = 2.34 * 10**(-5) * dt 
 k2 = 1 * 10**(-5) * dt 
@@ -82,19 +87,23 @@ problem = {
     'bounds': bounds
 }
 
-with open('model_outputs_scenario1.json', 'r') as f:
-    outputs1 = np.array(json.load(f))
-with open('sampled_params.json', 'r') as f:
-    param_values_list = json.load(f)
+folder_with_sampled_params = "SA_results"
+with open(os.path.join(folder_with_sampled_params, 'compiled_model_outputs.pkl'), 'rb') as f:
+    outputs1 = np.array(pickle.load(f))
+with open(os.path.join(folder_with_sampled_params, 'sampled_params.pkl'), 'rb') as f:
+    param_values_list = pickle.load(f)
 
 # Reshape outputs1 to have dimensions (number of samples, number of outputs)
 outputgrouping = ['sc125p', 'sc225p', 'sc150p', 'sc250p', 'sc175p', 'sc275p', 'sc1', 'sc2']
 varname = ['A_MII', 'I', 'beta', 'A_MC', 'A_F', 'A_M', 'A_Malpha', 'CIII', 'CI']
-for i in range(0, 8):
-    outputs1_reshaped = outputs1[:, 0, i, 0, :]
+outputs1_reshaped = np.reshape(outputs1, (720896, 9)) # 1064 samples!
+
+for i in range(8):
     for j in range(0, 9):
         valout = outputs1_reshaped[:, j]
-        Sobol_indices_scenario1 = sobol.analyze(problem, valout, print_to_console=True)
-        with open('sobol_indices_'+str(outputgrouping[i])+'_'+str(varname[j])+'.pickle', 'wb') as f:
-            pickle.dump(Sobol_indices_scenario1, f)
+        Sobol_indices_scenario = sobol.analyze(problem, valout, print_to_console=True)
+        with open(os.path.join(output_folder, 'sobol_indices_'+str(outputgrouping[i])+'_'+str(varname[j])+'.pickle'), 'wb') as f:
+            pickle.dump(Sobol_indices_scenario, f)
 
+# with open('sobol_indices_' + str(outputgrouping[i]) + '_' + str(varname[j]) + '.pickle','rb') as f:
+#     k = pickle.load(f)
