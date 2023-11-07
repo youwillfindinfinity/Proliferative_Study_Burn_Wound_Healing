@@ -2,5 +2,4 @@ matplotlib==3.7.1
 numpy==1.25.1
 pandas==2.0.3
 SALib==1.4.7
-scipy==1.10.1
-sympy==1.12
+seaborn==0.13.0

@@ -1,7 +1,6 @@
 import numpy as np
 from SALib.sample import saltelli
 from SALib.analyze import sobol
-import json
 from param_ranges import boundfunc
 import pickle
 import os
