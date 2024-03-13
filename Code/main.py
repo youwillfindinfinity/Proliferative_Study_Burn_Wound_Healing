@@ -1,6 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from params import *
+from matplotlib.ticker import ScalarFormatter
 
 
 
