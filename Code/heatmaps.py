@@ -18,7 +18,7 @@ columns = ['k_1', 'k_2', 'k_3', 'k_4', 'k_5', 'k_6', 'k_7', 'k_8', 'k_9', 'k_10'
 'A_MII0', 'I_0', 'beta_0', 'A_MC0', 'A_F0', 'A_M0', 'A_Malpha0',
 'C_III0', 'C_I0'
 ]
-
+#
 percentages = ['', '25p', '50p', '75p'] # list of fragmented data
 varnames = ["A_MII", "A_MC", "I", "beta", "A_F", "A_M", "A_Malpha", "CI", "CIII"] # variables 
 data = []
