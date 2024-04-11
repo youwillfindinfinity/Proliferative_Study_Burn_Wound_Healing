@@ -1,5 +1,6 @@
 import matplotlib.pyplot as plt
 import numpy as np
+import matplotlib
 import matplotlib.cm as cm
 import pickle
 import os
@@ -17,6 +18,10 @@ os.makedirs(output_folder3, exist_ok=True)
 # Create a directory to store pickle files
 output_folder4 = "best_init_params"
 os.makedirs(output_folder4, exist_ok=True)
+
+# Create a directory to store pickle files
+output_folder5 = "pickle_plasma4"
+os.makedirs(output_folder5, exist_ok=True)
 
 
 def A_MII1_func(mu1, A_MII0, t):
@@ -77,10 +82,10 @@ def initialize_problem_from_data(val, var):
 
     with open(os.path.join(output_folder4, f"{val}_initvalprob_{var}.pkl"), "rb") as f:
         loaded_results = pickle.load(f)
+    print(loaded_results)
     initial_values = loaded_results['initial_values'] 
 
     dt = 1/(60*24)
-    dt_hour = 1/60
     # Production Parameters 
     k1 = 2.34 * 10**(-5) * dt 
     k2 = 1 * 10**(-5) * dt 
@@ -253,9 +258,9 @@ def initialize_problem_from_data(val, var):
         return CI2
 
 def get_all_best_within_range(results_folder):
-    keys = ["CIII1","CIII2","CI1","CI2","A_F1","A_M1","A_F2","A_M2", 
-    "A_Malpha1","A_Malpha2","A_MC1","A_MC2","A_MII1","A_MII2",
-    "I1","I2","beta1","beta2"]
+    keys = ["CIII1"]#,"CIII2","CI1","CI2","A_F1","A_M1","A_F2","A_M2", \
+    # "A_Malpha1","A_Malpha2","A_MC1","A_MC2","A_MII1","A_MII2",\
+    # "I1","I2","beta1","beta2"]
     # specify bounds for search
     bounds = [[0,1], [0, 1], [0, 2], [0, 2], [0, 5000], [0, 3000],
     [0, 5000], [0, 3000], [0, 1500], [0, 1500], [0, 5000], [0, 5000],
@@ -263,13 +268,12 @@ def get_all_best_within_range(results_folder):
     [0, 10**(-5)]]
     for l in range(len(keys)):
         print("doing key {}".format(keys[l]))
-        results_folder = output_folder3
         variable_of_interest = keys[l]  
         lower_bound = bounds[l][0]  # Specify the lower bound of the variable
         upper_bound = bounds[l][1]  # Specify the upper bound of the variable
         analyze_results(results_folder, variable_of_interest, lower_bound, upper_bound)
 
-def perform_exp(nr_exp):
+def perform_exp(nr_exp, output_folder):
 
     dt = 1/(60*24)
     # Production Parameters 
@@ -358,15 +362,15 @@ def perform_exp(nr_exp):
 
     # Define the parameter ranges for randomization
     parameter_ranges = {
-        'A_MII0': (500, 3500),
-        'I0': (1e-9, 5e-7),
-        'beta0': (1e-9, 5e-7),
-        'A_MC0': (500, 3500),
-        'A_F0': (0,2800),
-        'A_M0': (0,1000),
-        'A_Malpha0': (0,500),
-        'CIII0': (0,1),
-        'CI0': (0,0.1)
+        'A_MII0': (0, 5000), # (500, 3500)
+        'I0': (1e-11, 5e-5), # (1e-9, 5e-7)
+        'beta0': (1e-11, 5e-5), # (1e-9, 5e-7)
+        'A_MC0': (0, 5000), # (500, 3500)
+        'A_F0': (0,10000), # (0,2800)
+        'A_M0': (0,10000), # (0,1000)
+        'A_Malpha0': (0,5000), # (0,500)
+        'CIII0': (0,1), # (0,1)
+        'CI0': (0,1) # (0,0.1)
     }
     # Initialize the number of experiments (randomized initial values)
     num_experiments = nr_exp
@@ -472,7 +476,7 @@ def perform_exp(nr_exp):
             }
         }
         
-        with open(os.path.join(output_folder3, f"experiment_{experiment}_results.pkl"), "wb") as f:
+        with open(os.path.join(output_folder, f"experiment_{experiment}_results.pkl"), "wb") as f:
             pickle.dump(results, f)
 
 
@@ -499,6 +503,8 @@ def plot_exp1(nr_exp, out):
         # Load results from the specified experiment
         with open(os.path.join(out, f"experiment_{experiment_to_load}_results.pkl"), "rb") as f:
             loaded_results = pickle.load(f)
+        # print(loaded_results.keys())
+        # continue
         # Check if CIII1 data is within y-limits
         if all(0<y_value <= 1 for y_value in loaded_results["CIII1"]):
             axs[0, 0].plot(loaded_results["time"], loaded_results["CIII1"][1:], color=color, alpha=0.2)
@@ -594,32 +600,33 @@ def plot_exp2(nr_exp, out):
         # Load results from the specified experiment
         with open(os.path.join(out, f"experiment_{experiment_to_load}_results.pkl"), "rb") as f:
             loaded_results = pickle.load(f)
+        # print(loaded_results)
 
-        # Check if F1 data is within y-limits
-        if all(1<y_value <= 5000 for y_value in loaded_results["A_F1"]):
-            axs[0, 0].plot(loaded_results["time"], loaded_results["A_F1"][1:], color=color, alpha=0.2)
-            valid_F1_data.append(loaded_results["A_F1"][1:])
+        # # Check if F1 data is within y-limits
+        # if all(1<y_value <= 5000 for y_value in loaded_results["A_F1"]):
+        #     axs[0, 0].plot(loaded_results["time"], loaded_results["A_F1"][1:], color=color, alpha=0.2)
+        #     valid_F1_data.append(loaded_results["A_F1"][1:])
 
-        # Check if F2 data is within y-limits
-        if all(1<y_value <= 5000 for y_value in loaded_results["A_F2"]):
-            axs[0, 1].plot(loaded_results["time"], loaded_results["A_F2"][1:], color=color, alpha=0.2)
-            valid_F2_data.append(loaded_results["A_F2"][1:])
+        # # Check if F2 data is within y-limits
+        # if all(1<y_value <= 5000 for y_value in loaded_results["A_F2"]):
+        #     axs[0, 1].plot(loaded_results["time"], loaded_results["A_F2"][1:], color=color, alpha=0.2)
+        #     valid_F2_data.append(loaded_results["A_F2"][1:])
 
-        # Check if M1 data is within y-limits
-        if all(1<y_value <= 3000 for y_value in loaded_results["A_M1"]):
-            axs[1, 0].plot(loaded_results["time"], loaded_results["A_M1"][1:], color=color, alpha=0.2)
-            valid_M1_data.append(loaded_results["A_M1"][1:])
+        # # Check if M1 data is within y-limits
+        # if all(1<y_value <= 3000 for y_value in loaded_results["A_M1"]):
+        #     axs[1, 0].plot(loaded_results["time"], loaded_results["A_M1"][1:], color=color, alpha=0.2)
+        #     valid_M1_data.append(loaded_results["A_M1"][1:])
 
-        # Check if M2 data is within y-limits
-        if all(1<y_value <= 3000 for y_value in loaded_results["A_M2"]):
-            axs[1, 1].plot(loaded_results["time"], loaded_results["A_M2"][1:], color=color, alpha=0.2)
-            valid_M2_data.append(loaded_results["A_M2"][1:])
+        # # Check if M2 data is within y-limits
+        # if all(1<y_value <= 3000 for y_value in loaded_results["A_M2"]):
+        #     axs[1, 1].plot(loaded_results["time"], loaded_results["A_M2"][1:], color=color, alpha=0.2)
+        #     valid_M2_data.append(loaded_results["A_M2"][1:])
 
-    # Compute mean curves
-    mean_F1 = np.mean(valid_F1_data, axis=0)
-    mean_F2 = np.mean(valid_F2_data, axis=0)
-    mean_M1 = np.mean(valid_M1_data, axis=0)
-    mean_M2 = np.mean(valid_M2_data, axis=0)
+    # # Compute mean curves
+    # mean_F1 = np.mean(valid_F1_data, axis=0)
+    # mean_F2 = np.mean(valid_F2_data, axis=0)
+    # mean_M1 = np.mean(valid_M1_data, axis=0)
+    # mean_M2 = np.mean(valid_M2_data, axis=0)
 
     max_F1 = initialize_problem_from_data("max", "A_F1")[1:]
     min_F1 = initialize_problem_from_data("min", "A_F1")[1:]
@@ -905,7 +912,7 @@ def analyze_results(results_folder, variable_of_interest, lower_bound, upper_bou
                             "variable_value": worst_variable_value,
                             "initial_values": results["initial_values1"].copy(),
                         }
-    print("Best and worst results achived for {}!".format(variable_of_interest))    
+    print("Best and worst results achieved for {}!".format(variable_of_interest))    
     print("Outputting results for {}...".format(variable_of_interest))
     with open(os.path.join(output_folder4, f"best_initvalprob_{variable_of_interest}.pkl"), "wb") as f:
             pickle.dump(best_result, f)
@@ -913,14 +920,20 @@ def analyze_results(results_folder, variable_of_interest, lower_bound, upper_bou
     with open(os.path.join(output_folder4, f"worst_initvalprob_{variable_of_interest}.pkl"), "wb") as f:
             pickle.dump(worst_result, f)
     print("Worst results outputed!")
-    # return best_result, worst_result
+    return best_result, worst_result
 
 
-# results_folder = output_folder3
+results_folder = output_folder5
+# perform_exp(nr_exp=1000, output_folder=results_folder)
 # get_all_best_within_range(results_folder)
 
+# print(initialize_problem_from_data("best", "CIII1"))
+# plot_exp1(2, results_folder)
+plot_exp2(2, results_folder)
+# plot_exp3(2, results_folder)
+# plot_exp4(1000, results_folder)
 
-# plot_exp1(1000, output_folder3)
-# plot_exp2(1000, output_folder3)
-# plot_exp3(1000, output_folder3)
-# plot_exp4(1000, output_folder3)
+# with open(os.path.join(output_folder4, f"best_initvalprob_CIII1.pkl"), "rb") as f:
+#     loaded_results = pickle.load(f)
+# print(loaded_results)
+# initial_values = loaded_results['initial_values'] 

@@ -3,10 +3,9 @@ import matplotlib.pyplot as plt
 import pickle
 import pandas as pd
 import seaborn as sns
-from matplotlib.colors import LinearSegmentedColormap
-from sklearn.preprocessing import MinMaxScaler
 import matplotlib.ticker as ticker
 
+# Define your variables and load data as before
 variables = ['A_F1', 'A_F2', 'A_M1', 'A_M2', 'A_Malpha1', 'A_Malpha2', 'A_MC1', 'A_MC2', 'A_MII1', 'A_MII2', 'beta1', 'beta2', 'CI1', 'CI2', 'CIII1', 'CIII2', 'I1', 'I2']
 result_df_list = []
 
@@ -52,71 +51,57 @@ final_result_df = pd.concat(result_df_list, ignore_index=True)
 max_values_df = final_result_df[final_result_df['Label'].str.startswith('Max')]
 min_values_df = final_result_df[final_result_df['Label'].str.startswith('Min')]
 
-# Sort max values to show first
-max_values_df = max_values_df.sort_values(by='Value', ascending=False)
-
 # Drop 'Label' column as we don't want to plot it
-max_values_df = max_values_df.drop(columns='Label')
-min_values_df = min_values_df.drop(columns='Label')
+max_values_df = max_values_df.drop(columns=['Label', 'Value'])
+min_values_df = min_values_df.drop(columns=['Label', 'Value'])
 
-# Normalize the data using MinMaxScaler (excluding the first column)
-scaler = MinMaxScaler()
-max_values_df.iloc[:, 0:] = scaler.fit_transform(max_values_df.iloc[:, 0:])
-min_values_df.iloc[:, 0:] = scaler.fit_transform(min_values_df.iloc[:, 0:])
 
+
+
+with open("max_vals_df.pkl", "wb") as f:
+    pickle.dump(max_values_df, f)
+
+with open("min_vals_df.pkl", "wb") as f:
+    pickle.dump(min_values_df, f)
+
+# Compute feature importance (e.g., correlation with 'Value')
+feature_importance_max = max_values_df.corrwith(final_result_df['Value'])
+feature_importance_min = min_values_df.corrwith(final_result_df['Value'])
+
+
+# Sort features by importance
+feature_importance_max_sorted = feature_importance_max.abs().sort_values(ascending=False)
+feature_importance_min_sorted = feature_importance_min.abs().sort_values(ascending=False)
+
+# print(max_values_df[feature_importance_max_sorted.index].columns)
+# print(min_values_df[feature_importance_max_sorted.index].columns)
+# Define custom labels
 variables_labels = [r'$A_{F1}$', r'$A_{F2}$', r'$A_{M1}$', r'$A_{M2}$', r'$A_{Malpha1}$', r'$A_{Malpha2}$', r'$A_{MC1}$', r'$A_{MC2}$', r'$A_{MII1}$', r'$A_{MII2}$', r'$\beta_1$', r'$\beta_2$', r'$C_{I1}$', r'$C_{I2}$', r'$C_{III1}$', r'$C_{III2}$', r'$I_{1}$', r'$I_{2}$']
-xvariables_labels = [r'Value $t_{end}$', r'$A_{F}0$', r'$A_{M}0$', r'$A_{Malpha}0$', r'$A_{MC}0$', r'$A_{MII}0$', r'$\beta0$', r'$C_{I}0$', r'$C_{III}0$', r'$I0$']
-# Modify y-axis labels
-max_labels = ["{}".format(label) for label in variables_labels]
-min_labels = ["{}".format(label) for label in variables_labels]
+xvariables_labelsmax = [r'$A_{MC0}$', r'$A_{MII0}$', r'$A_{F0}$', r'$A_{M0}$', r'$A_{Malpha0}$', r'$\beta_0$', r'$I_0$', r'$C_{III0}$', r'$C_{I0}$']
+xvariables_labelsmin = [r'$A_{MII0}$', r'$A_{F0}$', r'$A_{MC0}$', r'$A_{M0}$', r'$A_{Malpha0}$', r'$\beta_0$', r'$I_0$', r'$C_{III0}$', r'$C_{I0}$']
 
-# Define custom colormap for max values 
-cmap = LinearSegmentedColormap.from_list("custom_gnbu", sns.color_palette("BuGn", as_cmap=True)(np.linspace(0, 1, 1000)))
-
-# Define custom colormap for min values
-cmap_r = LinearSegmentedColormap.from_list("custom_gnbu_r", sns.color_palette("BuGn_r", as_cmap=True)(np.linspace(0, 1, 1000)))
-
-# Define custom color limits for max and min values
-max_vmin = 7.1e-10
-max_vmax = 1.0
-
-min_vmin = 7.7e-12
-min_vmax = 1
-
-# Plot max values heatmap with custom color limits and scientific notation color bar
-plt.figure(figsize=(10, 6))
-ax = sns.heatmap(max_values_df, annot=True, annot_kws={"size": 7}, cmap=cmap, cbar=True, vmin=max_vmin, vmax=max_vmax)
-plt.title('Max Values Heatmap')
+# Plot max values heatmap with sorted feature importance and custom labels
+plt.figure(figsize=(12, 8))
+ax = sns.heatmap(max_values_df[feature_importance_max_sorted.index].reindex(columns = ["A_MC0", "A_MII0", "A_F0", "A_M0", "A_Malpha0", "beta0", "I0", "CIII0", "CI0"]), annot=True, cmap='BuGn', cbar=True)
+plt.title('Max Values Heatmap (Sorted by Feature Importance)')
 plt.xlabel('Parameter Index')
 plt.ylabel('Sample Index')
-plt.xticks(ticks=np.arange(len(xvariables_labels)) + 0.5, labels=xvariables_labels, rotation=45, ha='right')
-plt.yticks(ticks=np.arange(len(max_labels)) + 0.5, labels=max_labels, rotation=0)
+plt.xticks(ticks=np.arange(len(xvariables_labelsmax)) + 0.5, labels=xvariables_labelsmax, rotation=45, ha='right')
 
-# Set scientific notation for color bar
-formatter1 = ticker.ScalarFormatter(useMathText=True)
-formatter1.set_scientific(True)
-formatter1.set_powerlimits((-6, 2))  # Adjust as needed
-ax.collections[0].colorbar.set_label('Normalized Value', rotation=270, labelpad=20)
-ax.collections[0].colorbar.ax.yaxis.set_major_formatter(formatter1)
-
-plt.savefig('max_values_heatmap.png', dpi=300)  # Save with DPI 300
+# Use row names as y-axis labels (assuming they are unique identifiers)
+plt.yticks(ticks=np.arange(len(max_values_df)) + 0.5, labels=variables_labels, rotation=0)
+plt.savefig('max_values_heatmap.png', dpi=300)
 plt.show()
-
-# Plot min values heatmap with custom color limits and scientific notation color bar
-plt.figure(figsize=(10, 6))
-ax = sns.heatmap(min_values_df, annot=True, annot_kws={"size": 7}, cmap=cmap_r, cbar=True, vmin=min_vmin, vmax=min_vmax)
-plt.title('Min Values Heatmap')
+# .reindex(columns = ["A_MII0", "A_F0", "A_MC0", "A_M0", "A_Malpha0", "beta0", "I0", "CIII0", "CI0"]
+# Plot min values heatmap with sorted feature importance and custom labels
+plt.figure(figsize=(12, 8))
+ax = sns.heatmap(min_values_df[feature_importance_min_sorted.index].reindex(columns = ["A_MII0", "A_F0", "A_MC0", "A_M0", "A_Malpha0", "beta0", "I0", "CIII0", "CI0"]), annot=True, cmap='BuGn', cbar=True)
+plt.title('Min Values Heatmap (Sorted by Feature Importance)')
 plt.xlabel('Parameter Index')
 plt.ylabel('Sample Index')
-plt.xticks(ticks=np.arange(len(xvariables_labels)) + 0.5, labels=xvariables_labels, rotation=45, ha='right')
-plt.yticks(ticks=np.arange(len(min_labels)) + 0.5, labels=min_labels, rotation=0)
+plt.xticks(ticks=np.arange(len(xvariables_labelsmin)) + 0.5, labels=xvariables_labelsmin, rotation=45, ha='right')
 
-# Set scientific notation for color bar
-formatter2 = ticker.ScalarFormatter(useMathText=True)
-formatter2.set_scientific(True)
-formatter2.set_powerlimits((2, -8))  # Adjust as needed
-ax.collections[0].colorbar.set_label('Normalized Value', rotation=270, labelpad=20)
-ax.collections[0].colorbar.ax.yaxis.set_major_formatter(formatter2)
-
-plt.savefig('min_values_heatmap.png', dpi=300)  # Save with DPI 300
+# Use row names as y-axis labels (assuming they are unique identifiers)
+plt.yticks(ticks=np.arange(len(min_values_df)) + 0.5, labels=variables_labels, rotation=0)
+plt.savefig('min_values_heatmap.png', dpi=300)
 plt.show()
