@@ -28,7 +28,7 @@ Local Burn wound healing, Proliferative phase, Computational modeling, Continuou
 
 This paper was submitted for the *7th International Workshop on Computational Methods for the Immune System Function (CMISF 2023)*.
 
-![Image](https://github.com/youwillfindinfinity/Proliferative_Study_Burn_Wound_Healing/blob/a5ff554d89c1606846644c4b69ed6a89ecc0d779/Results/Figure3(e-h).png)
+![Image](https://github.com/youwillfindinfinity/Proliferative_Study_Burn_Wound_Healing/blob/b738ac006106ef4eca63186d2903d859cfe82e87/Results/Figure3(D1).png)
 
 ## Abstract
 
@@ -47,4 +47,8 @@ git clone https://github.com/youwillfindinfinity/Proliferative_Study_Burn_Wound_
 
 or by clicking on `Code` > `Download ZIP`.
 
-The figures and text are not yet open source. The authors reserve the rights to the article content, which is currently being submitted for publication in the *7th International Workshop on Computational Methods for the Immune System Function (CMISF 2023)* conference.
+The figures and text are open source. The authors reserve the rights to the article content, which is currently submitted for publication in the *7th International Workshop on Computational Methods for the Immune System Function (CMISF 2023)* conference.
+
+10.1109/BIBM58861.2023.10385875
+
+This paper is getting extended and soon will be published at BMC Bioinformatics, link to follow.
