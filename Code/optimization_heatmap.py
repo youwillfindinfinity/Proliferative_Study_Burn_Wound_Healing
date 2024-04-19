@@ -76,14 +76,14 @@ feature_importance_min_sorted = feature_importance_min.abs().sort_values(ascendi
 # print(max_values_df[feature_importance_max_sorted.index].columns)
 # print(min_values_df[feature_importance_max_sorted.index].columns)
 # Define custom labels
-variables_labels = [r'$A_{F1}$', r'$A_{F2}$', r'$A_{M1}$', r'$A_{M2}$', r'$A_{Malpha1}$', r'$A_{Malpha2}$', r'$A_{MC1}$', r'$A_{MC2}$', r'$A_{MII1}$', r'$A_{MII2}$', r'$\beta_1$', r'$\beta_2$', r'$C_{I1}$', r'$C_{I2}$', r'$C_{III1}$', r'$C_{III2}$', r'$I_{1}$', r'$I_{2}$']
-xvariables_labelsmax = [r'$A_{MC0}$', r'$A_{MII0}$', r'$A_{F0}$', r'$A_{M0}$', r'$A_{Malpha0}$', r'$\beta_0$', r'$I_0$', r'$C_{III0}$', r'$C_{I0}$']
-xvariables_labelsmin = [r'$A_{MII0}$', r'$A_{F0}$', r'$A_{MC0}$', r'$A_{M0}$', r'$A_{Malpha0}$', r'$\beta_0$', r'$I_0$', r'$C_{III0}$', r'$C_{I0}$']
+variables_labels = [r'$A_{F}(Sc.1)$', r'$A_{F}(Sc.2)$', r'$A_{M}(Sc.1)$', r'$A_{M}(Sc.2)$', r'$A_{M\alpha}(Sc.1)$', r'$A_{M\alpha}(Sc.2)$', r'$A_{MC}(Sc.1)$', r'$A_{MC}(Sc.2)$', r'$A_{MII}(Sc.1)$', r'$A_{MII}(Sc.2)$', r'$T(Sc.1)$', r'$T(Sc.2)$', r'$C_{I}(Sc.1)$', r'$C_{I}(Sc.2)$', r'$C_{III}(Sc.1)$', r'$C_{III}(Sc.2)$', r'$I(Sc.1)$', r'$I(Sc.2)$']
+xvariables_labelsmax = [r'$A_{MC0}$', r'$A_{MII0}$', r'$A_{F0}$', r'$A_{M0}$', r'$A_{M\alpha0}$', r'$T_0$', r'$I_0$', r'$C_{III0}$', r'$C_{I0}$']
+xvariables_labelsmin = [r'$A_{MII0}$', r'$A_{F0}$', r'$A_{MC0}$', r'$A_{M0}$', r'$A_{M\alpha0}$', r'$T_0$', r'$I_0$', r'$C_{III0}$', r'$C_{I0}$']
 
 # Plot max values heatmap with sorted feature importance and custom labels
 plt.figure(figsize=(12, 8))
 ax = sns.heatmap(max_values_df[feature_importance_max_sorted.index].reindex(columns = ["A_MC0", "A_MII0", "A_F0", "A_M0", "A_Malpha0", "beta0", "I0", "CIII0", "CI0"]), annot=True, cmap='BuGn', cbar=True)
-plt.title('Max Values Heatmap (Sorted by Feature Importance)')
+plt.title('Max Values Heatmap (Sorted by Importance)')
 plt.xlabel('Parameter Index')
 plt.ylabel('Sample Index')
 plt.xticks(ticks=np.arange(len(xvariables_labelsmax)) + 0.5, labels=xvariables_labelsmax, rotation=45, ha='right')
@@ -96,7 +96,7 @@ plt.show()
 # Plot min values heatmap with sorted feature importance and custom labels
 plt.figure(figsize=(12, 8))
 ax = sns.heatmap(min_values_df[feature_importance_min_sorted.index].reindex(columns = ["A_MII0", "A_F0", "A_MC0", "A_M0", "A_Malpha0", "beta0", "I0", "CIII0", "CI0"]), annot=True, cmap='BuGn', cbar=True)
-plt.title('Min Values Heatmap (Sorted by Feature Importance)')
+plt.title('Min Values Heatmap (Sorted by Importance)')
 plt.xlabel('Parameter Index')
 plt.ylabel('Sample Index')
 plt.xticks(ticks=np.arange(len(xvariables_labelsmin)) + 0.5, labels=xvariables_labelsmin, rotation=45, ha='right')
