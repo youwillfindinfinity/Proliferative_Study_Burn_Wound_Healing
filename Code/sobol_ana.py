@@ -104,5 +104,5 @@ for i in range(8):
         with open(os.path.join(output_folder, 'sobol_indices_'+str(outputgrouping[i])+'_'+str(varname[j])+'.pickle'), 'wb') as f:
             pickle.dump(Sobol_indices_scenario, f)
 
-# with open('sobol_indices_' + str(outputgrouping[i]) + '_' + str(varname[j]) + '.pickle','rb') as f:
-#     k = pickle.load(f)
+with open('sobol_indices_' + str(outputgrouping[i]) + '_' + str(varname[j]) + '.pickle','rb') as f:
+    k = pickle.load(f)

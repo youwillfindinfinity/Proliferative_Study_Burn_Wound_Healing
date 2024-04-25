@@ -70,15 +70,6 @@ def get_params(df, params_wanted=None):
         
     return AF0params, AM0params, AMalpha0params, AMC0params, AMII0params, beta0params, CI0params, CIII0params, I0params
 
-    
-# Function to find indices where values are approximately equal within a tolerance
-def find_indices_with_tolerance(arr1, arr2, tolerance):
-    indices = []
-    for i in range(len(arr1)):
-        if abs(arr1[i] - arr2[i]) <= tolerance * arr1[i]:  # Check if difference is within tolerance
-            indices.append(i)
-    return indices        
-
 def replace_paramset(row, old_param_dict, df):
     '''
     row represents which row we want from the actual df
@@ -90,34 +81,6 @@ def replace_paramset(row, old_param_dict, df):
     # print("new params", [old_param_dict[key] for key in keys_to_change])
     new_param_dict = old_param_dict
     return new_param_dict
-# init_params = initial_parameters()
-# replace_paramset(0, init_params)
-
-def collagen_contractive_ratio_healthy(time_points, max_FM=None, min_CIIII=None):
-    # Initialize lists to store collagen ratio (I/III) and contractive ratio values
-    collagen_ratios = []
-    contractive_ratios = []
-    
-    # Define polynomial functions for collagen ratio (collagen I/collagen III) and contractive ratio (fibroblasts/myofibroblasts)
-    # Assume:
-    # Collagen ratio (I/III) trends:
-    # - Higher collagen III initially, increasing collagen I/III ratio over time
-    def collagen_ratio(t, max_FM=None):
-        return 3 - 1.6 * (np.tanh((t - 15)) / 5) - np.tanh((t - 30) / 5)
-    
-    # Contractive ratio (fibroblasts/myofibroblasts) trends:
-    # - Low initially, decreasing over time
-    def contractive_ratio(t, min_CIIII=None):
-        return 5.85 + 1/6 * np.tanh((t - 15)) / 5
-    
-    # Evaluate the functions at specified time points
-    for t in time_points:
-        collagen_ratios.append(collagen_ratio(t, max_FM=None))
-        contractive_ratios.append(contractive_ratio(t, min_CIIII=None))
-    
-    # Return lists of collagen ratio and contractive ratio values at each time point
-    return collagen_ratios, contractive_ratios
-
 
 def fig_1a():
 
@@ -148,10 +111,10 @@ def fig_1a():
     indices = np.arange(0, len(ratio_AFAM1), 4000)
     
     
-    # Use 'seismic' colormap based on inflammatory_metric1 values for Sc.1
+    # Use 'summer' colormap based on inflammatory_metric1 values for Sc.1
     if len(ratio_AFAM1) > 0:
         plt.scatter(ratio_AFAM1[indices], ratio_CIIICI1[indices], c=inflammatory_metric1[indices], cmap='summer', alpha=1, label='Sc.1', marker='o')
-    # Use 'seismic' colormap based on inflammatory_metric2 values for Sc.2
+    # Use 'summer' colormap based on inflammatory_metric2 values for Sc.2
     if len(ratio_AFAM2) > 0:
         plt.scatter(ratio_AFAM2[indices], ratio_CIIICI2[indices], c=inflammatory_metric2[indices], cmap='summer', alpha=1, label='Sc.2', marker='*')
     plt.scatter(ratio_AFAM1[-1], ratio_CIIICI1[-1], alpha=1, label='$t_{end}$, Sc.1', marker='o', color = "red")
@@ -174,7 +137,7 @@ def fig_1b():
     # Create a directory to store pickle files
     output_folder = "metric_plots_inflammation"
     os.makedirs(output_folder, exist_ok=True)
-    init_params = initial_parameters()  # Assuming you have defined this function
+    init_params = initial_parameters()  
     # Solve the system with updated parameters to get results
     time, dt, A_MII1, I1, beta1, A_MC1, A_F1, A_M1, A_Malpha1, CIII1, CI1, A_MII2, I2, beta2, A_MC2, A_F2, A_M2, A_Malpha2, CIII2, CI2 = solver(init_params)
 
@@ -214,7 +177,6 @@ def fig_2(df=None):
     output_folder = "metric_plots"
     os.makedirs(output_folder, exist_ok=True)
     
-    # Assume initial_parameters() and replace_paramset() are defined elsewhere
     init_params = initial_parameters()
 
     dfs = ["max", "min"]
@@ -248,15 +210,13 @@ def fig_2(df=None):
             indices = np.arange(0, len(ratio_AFAM1), 4000)
             
             
-            # Use 'seismic' colormap based on inflammatory_metric1 values for Sc.1
+            # Use 'summer' colormap based on inflammatory_metric1 values for Sc.1
             if len(ratio_AFAM1) > 0:
                 # norm1 = Normalize(vmin=np.min(inflammatory_metric1), vmax=np.max(inflammatory_metric1))
-                # plt.scatter(ratio_AFAM1[0], ratio_CIIICI1[0], alpha=1, label='$t_0$, Sc.1', marker='o', color = "black")
                 plt.scatter(ratio_AFAM1[indices], ratio_CIIICI1[indices], c=inflammatory_metric1[indices], cmap='summer', alpha=1, label='Sc.1', marker='o')
-            # Use 'seismic' colormap based on inflammatory_metric2 values for Sc.2
+            # Use 'summer' colormap based on inflammatory_metric2 values for Sc.2
             if len(ratio_AFAM2) > 0:
                 # norm2 = Normalize(vmin=np.min(inflammatory_metric2), vmax=np.max(inflammatory_metric2))
-                # plt.scatter(ratio_AFAM2[0], ratio_CIIICI2[0], alpha=1, label='$t_0$, Sc.2', marker='*', color = "black")
                 plt.scatter(ratio_AFAM2[indices], ratio_CIIICI2[indices], c=inflammatory_metric2[indices], cmap='summer', alpha=1, label='Sc.2', marker='*')
             
             plt.scatter(ratio_AFAM1[-1], ratio_CIIICI1[-1], alpha=1, label='$t_{end}$, Sc.1', marker='o', color = "red")
@@ -266,8 +226,6 @@ def fig_2(df=None):
             plt.ylabel(r'Collagen ratio ($\frac{CI}{CIII}$)')
             plt.colorbar(label=r'Inflammation metric($\frac{I}{A_{MC}}-\frac{T}{A_{MII}}$)') 
             plt.legend()
-            # plt.title(f'{}')
-
             # Save the plot to a file
             plt.savefig(f"{output_folder}/{df_type}_ratiometrics_{row}.png", dpi=300)
             plt.close()  # Close the figure to release memory
@@ -298,6 +256,7 @@ def fig_3(df=None):
             if A_F2 != 0 or CI2 != 0:
                 ratio_PROINF2 = np.divide(I2, A_MC2, out=np.zeros_like(I2), where=A_MC2 != 0 or I2 != 0)
                 ratio_ANTIINF2 = np.divide(beta2, A_MII2, out=np.zeros_like(beta2), where=A_MII2 != 0 or beta2 != 0)
+            
             # Normalize ratios to 1 relative to the maximum value of PROINF or ANTIINF
             max_value1 = max(np.max(ratio_PROINF1), np.max(ratio_ANTIINF1))
             ratio_PROINF1 /= max_value1
@@ -312,30 +271,6 @@ def fig_3(df=None):
             # Plotting the ratios
             plt.plot(time, ratio_PROINF2[1::], color="red", alpha=0.5, label=f"Sc.2 - Pro-Inflammatory", linewidth=4, linestyle="dotted" )
             plt.plot(time, ratio_ANTIINF2[1::], color="blue", alpha=0.5, label=f"Sc.2 - Anti-Inflammatory", linewidth=4, linestyle="dotted")
-            # # Define tolerance (5%)
-            # tolerance = 0.00001
-
-            # # Find indices where ratio_PROINF1 values match ratio_ANTIINF1 values within tolerance
-            # indices_PROINF1 = find_indices_with_tolerance(ratio_PROINF1, ratio_ANTIINF1, tolerance)
-
-            # # Find indices where ratio_PROINF2 values match ratio_ANTIINF2 values within tolerance
-            # indices_PROINF2 = find_indices_with_tolerance(ratio_PROINF2, ratio_ANTIINF2, tolerance)
-
-            # # Plot scatter for ratio_PROINF1 where values match within tolerance
-            # if indices_PROINF1:
-            #     plt.scatter(time[indices_PROINF1], ratio_PROINF1[indices_PROINF1], marker="o", color="red")
-            #     for idx in indices_PROINF1:
-            #         day_number = round(time[idx],0) 
-            #         plt.text(time[idx], ratio_PROINF1[idx], f'Day {day_number:.1f}', ha='right', va='bottom')
-
-            # # Plot scatter for ratio_PROINF2 where values match within tolerance
-            # if indices_PROINF2:
-            #     plt.scatter(time[indices_PROINF2], ratio_PROINF2[indices_PROINF2], marker="*", color="red")
-            #     for idx in indices_PROINF2:
-            #         day_number = round(time[idx],0)
-            #         plt.text(time[idx], ratio_PROINF2[idx], f'Day {day_number:.1f}', ha='left', va='top')
-
-
             plt.xlabel('Time of simulation (days)')
             plt.ylabel(r'Normalized concentration(AU)')
             plt.legend()
@@ -358,7 +293,7 @@ def pca_data():
     updated_params = initial_parameters()
 
     for i in range(999):
-        # Load results from the specified experiment (assuming experiment_1_results.pkl contains the parameter iterations)
+        # Load results from the specified experiment (
         with open(f"pickle_plasma3/experiment_{i}_results.pkl", "rb") as f:
             loaded_results = pickle.load(f)
         
@@ -431,7 +366,7 @@ def pca_data():
 
 
 
-def fig_5():
+def fig_4():
     output_folder = "PCA"
     scenarios = [1, 2]
 
@@ -504,55 +439,3 @@ def fig_5():
         # plt.title(f't-SNE Analysis - Scenario {scenario}')
         plt.savefig(f"{output_folder}/tsne_plot_scenario_{scenario}_custom_labels.png", dpi=300)
         plt.show()
-
-
-fig_5()
-
-
-
-# # Apply K-means clustering based on transformed data
-# kmeans = KMeans(n_clusters=4)  # Assuming 4 clusters based on defined labels
-# cluster_labels = kmeans.fit_predict(transformed_data_sc2)
-
-# # Plot t-SNE results with K-means clustering
-# plt.figure(figsize=(8, 6))
-# plt.scatter(transformed_data_sc2[:, 0], transformed_data_sc2[:, 1], c=cluster_labels, cmap='coolwarm')
-# plt.xlabel('t-SNE Component 1')
-# plt.ylabel('t-SNE Component 2')
-# plt.colorbar(label='Cluster')
-# plt.title('t-SNE Analysis with K-means Clustering - Scenario 2')
-# plt.savefig(f"{output_folder}/tsne_plot_scenario_2_kmeans_clusters.png", dpi=300)
-# plt.show()
-# from sklearn.cluster import KMeans
-# # Apply t-SNE for dimensionality reduction
-# tsne = TSNE(n_components=2, metric="euclidean", n_iter=10000, method = "exact")
-# embedded_data_sc1 = tsne.fit_transform(ratios_sc1_scaled)
-
-# # Fit K-means clustering on transformed PCA data
-# kmeans = KMeans(n_clusters=3)  # Adjust the number of clusters as needed
-# cluster_labels = kmeans.fit_predict(transformed_data_sc1)
-
-# # Plot PCA results with cluster assignments
-# plt.figure(figsize=(8, 6))
-# plt.scatter(transformed_data_sc1[:, 0], transformed_data_sc1[:, 1], c=cluster_labels, cmap='viridis')
-# plt.xlabel(r'Contraction ratio ($\frac{A_F}{A_M}$)')
-# plt.ylabel(r'Collagen ratio ($\frac{CI}{CIII}$)')
-# plt.colorbar(label='Cluster')
-# plt.title('PCA Analysis with K-means Clustering - Scenario 1')
-# plt.savefig(f"{output_folder}/pca_kmeans_plot_scenario_1.png", dpi=300)
-# plt.show()
-
-# pca_sc1 = PCA(n_components=2)
-# pca_sc1.fit(ratios_sc1_scaled)
-# transformed_data_sc1 = pca_sc1.transform(ratios_sc1_scaled)
-
-# Plot PCA results for Scenario 1 with colormap based on inflammatory metric
-# plt.figure(figsize=(8, 6))
-# plt.scatter(transformed_data_sc1[:, 0], transformed_data_sc1[:, 1], c=inflammatory_metrics_sc1, cmap='coolwarm')
-# plt.xlabel(r'Contraction ratio ($\frac{A_F}{A_M}$)')
-# plt.ylabel(r'Collagen ratio ($\frac{CI}{CIII}$)')
-# plt.colorbar(label=r'Inflammation metric($\frac{I}{A_{MC}}-\frac{T}{A_{MII}}$)')
-# plt.title('PCA Analysis - Scenario 1')
-# plt.savefig(f"{output_folder}/pca_plot_scenario_1.png", dpi=300)
-# plt.show()
-# # plt.close()

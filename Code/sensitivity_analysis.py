@@ -178,11 +178,11 @@ def model_output(params, cou, totalcou, parameters):
     outputs250 = []
     outputs175 = []
     outputs275 = []
-    # print((cou + 1) / totalcou)
+
     for params in param_values:
         # Convert params to a dictionary with parameter names as keys
         sampled_params = {param_name: param_value for param_name, param_value in zip(initial_parameters.keys(), params)}
-    # print(sampled_params.values(), parameters.values())
+
     # Time parameters
     weeks = 1
     n_days_in_week = 7
@@ -279,5 +279,3 @@ def compile(directory_path):
     with open(output_file_path, 'wb') as output_file:
         # Dump the compiled_data list into the output .pkl file
         pickle.dump(compiled_data, output_file)
-
-# compile(output_folder)

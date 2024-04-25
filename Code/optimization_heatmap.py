@@ -73,8 +73,6 @@ feature_importance_min = min_values_df.corrwith(final_result_df['Value'])
 feature_importance_max_sorted = feature_importance_max.abs().sort_values(ascending=False)
 feature_importance_min_sorted = feature_importance_min.abs().sort_values(ascending=False)
 
-# print(max_values_df[feature_importance_max_sorted.index].columns)
-# print(min_values_df[feature_importance_max_sorted.index].columns)
 # Define custom labels
 variables_labels = [r'$A_{F}(Sc.1)$', r'$A_{F}(Sc.2)$', r'$A_{M}(Sc.1)$', r'$A_{M}(Sc.2)$', r'$A_{M\alpha}(Sc.1)$', r'$A_{M\alpha}(Sc.2)$', r'$A_{MC}(Sc.1)$', r'$A_{MC}(Sc.2)$', r'$A_{MII}(Sc.1)$', r'$A_{MII}(Sc.2)$', r'$T(Sc.1)$', r'$T(Sc.2)$', r'$C_{I}(Sc.1)$', r'$C_{I}(Sc.2)$', r'$C_{III}(Sc.1)$', r'$C_{III}(Sc.2)$', r'$I(Sc.1)$', r'$I(Sc.2)$']
 xvariables_labelsmax = [r'$A_{MC0}$', r'$A_{MII0}$', r'$A_{F0}$', r'$A_{M0}$', r'$A_{M\alpha0}$', r'$T_0$', r'$I_0$', r'$C_{III0}$', r'$C_{I0}$']
@@ -92,7 +90,7 @@ plt.xticks(ticks=np.arange(len(xvariables_labelsmax)) + 0.5, labels=xvariables_l
 plt.yticks(ticks=np.arange(len(max_values_df)) + 0.5, labels=variables_labels, rotation=0)
 plt.savefig('max_values_heatmap.png', dpi=300)
 plt.show()
-# .reindex(columns = ["A_MII0", "A_F0", "A_MC0", "A_M0", "A_Malpha0", "beta0", "I0", "CIII0", "CI0"]
+
 # Plot min values heatmap with sorted feature importance and custom labels
 plt.figure(figsize=(12, 8))
 ax = sns.heatmap(min_values_df[feature_importance_min_sorted.index].reindex(columns = ["A_MII0", "A_F0", "A_MC0", "A_M0", "A_Malpha0", "beta0", "I0", "CIII0", "CI0"]), annot=True, cmap='BuGn', cbar=True)

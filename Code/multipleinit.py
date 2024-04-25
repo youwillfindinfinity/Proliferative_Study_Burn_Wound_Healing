@@ -8,20 +8,10 @@ import os
 
 
 # Create a directory to store pickle files
-output_folder2 = "pickle_plasma2"
-os.makedirs(output_folder2, exist_ok=True)
+output_folder = "pickle_plasma"
+os.makedirs(output_folder, exist_ok=True)
 
-# Create a directory to store pickle files
-output_folder3 = "pickle_plasma3"
-os.makedirs(output_folder3, exist_ok=True)
 
-# Create a directory to store pickle files
-output_folder4 = "best_init_params"
-os.makedirs(output_folder4, exist_ok=True)
-
-# Create a directory to store pickle files
-output_folder5 = "pickle_plasma4"
-os.makedirs(output_folder5, exist_ok=True)
 
 
 def A_MII1_func(mu1, A_MII0, t):
@@ -36,12 +26,6 @@ def A_MII2_func(mu1, A_MII0, omega1, t):
 def A_Malpha_func(rho2, A_M, A_Malpha0, t):
     A_Malpha = rho2 * A_M * t * A_Malpha0
     return A_Malpha
-
-
-
-
-
-
 
 
 
@@ -922,18 +906,12 @@ def analyze_results(results_folder, variable_of_interest, lower_bound, upper_bou
     print("Worst results outputed!")
     return best_result, worst_result
 
-
-results_folder = output_folder5
+results_folder = output_folder
 # perform_exp(nr_exp=1000, output_folder=results_folder)
 # get_all_best_within_range(results_folder)
 
 # print(initialize_problem_from_data("best", "CIII1"))
 # plot_exp1(2, results_folder)
-plot_exp2(2, results_folder)
+# plot_exp2(2, results_folder)
 # plot_exp3(2, results_folder)
 # plot_exp4(1000, results_folder)
-
-# with open(os.path.join(output_folder4, f"best_initvalprob_CIII1.pkl"), "rb") as f:
-#     loaded_results = pickle.load(f)
-# print(loaded_results)
-# initial_values = loaded_results['initial_values'] 
