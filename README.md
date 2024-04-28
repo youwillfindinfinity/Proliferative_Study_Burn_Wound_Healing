@@ -19,7 +19,7 @@ Manuscript received October 30, 2023; last revised 20 April, 2024
 
 **Correspondence(*) **
 
- P.P.M. van Zuijlen(ppmvazuijlen@me.com),\\
+ P.P.M. van Zuijlen(ppmvazuijlen@me.com),\
 
  Vivek M. Sheraton(v.s.muniraj@uva.nl)
 
@@ -34,16 +34,16 @@ This paper was submitted for the **7th International Workshop on Computational M
 
 ## Abstract
 
-**Background**: Understanding the complexities of burn wound healing is essential for developing better treatment strategies. The proliferative phase plays a vital role in wound closure and long-term tissue remodeling after burn injury. \\
+**Background**: Understanding the complexities of burn wound healing is essential for developing better treatment strategies. The proliferative phase plays a vital role in wound closure and long-term tissue remodeling after burn injury. \
 
-**Purpose**: This study aimed to develop a novel computational model using coupled ordinary differential equations to predict the interactions between cell types, cytokines, and key molecules during the proliferative phase of burn wound healing.\\
+**Purpose**: This study aimed to develop a novel computational model using coupled ordinary differential equations to predict the interactions between cell types, cytokines, and key molecules during the proliferative phase of burn wound healing.\
 
-**Methods**: A model was constructed using a system of equations that represent the interactions between fibroblasts, myofibroblasts, mast cells, macrophages type II, cytokines (TGF-β1 and IL-8), and collagen types I and III. Model simulations were run for 30 weeks and novel metrics were developed to evaluate Inflammation, Collagen deposition(2D) and Contraction.\\
+**Methods**: A model was constructed using a system of equations that represent the interactions between fibroblasts, myofibroblasts, mast cells, macrophages type II, cytokines (TGF-β1 and IL-8), and collagen types I and III. Model simulations were run for 30 weeks and novel metrics were developed to evaluate Inflammation, Collagen deposition(2D) and Contraction.\
 
 **Results**: The model successfully predicted realistic cell and molecular dynamics during the proliferative phase. The key parameters influencing wound remodeling after burn injury were identified as the initial counts of fibroblast / myofibroblast and initial collagen type III/I concentrations. Novel cellular and molecular metrics were proposed to differentiate between normotrophic, hypertrophic, and keloid scar development based on these parameters and ongoing inflammatory
-activity.\\
+activity.\
 
-**Conclusion**: This study presents a novel computational model that effectively predicts cellular and molecular interactions and identifies crucial factors influencing wound closure during the proliferative phase and scar formation during early remodeling phase of burn wound healing. The proposed metrics hold promise for early scar type prediction, aiding in clinical treatment decisions.\\
+**Conclusion**: This study presents a novel computational model that effectively predicts cellular and molecular interactions and identifies crucial factors influencing wound closure during the proliferative phase and scar formation during early remodeling phase of burn wound healing. The proposed metrics hold promise for early scar type prediction, aiding in clinical treatment decisions.\
 
 ## Software Implementation
 
