@@ -29,8 +29,8 @@ Email:
 Burn wound healing, Computational modeling, Proliferative phase, Wound closure, Scar development, Burns, Healing prediction, Mechanistic mode
 
 This paper was submitted for the **7th International Workshop on Computational Methods for the Immune System Function (CMISF 2023)**.
-
-![Image](https://github.com/youwillfindinfinity/Proliferative_Study_Burn_Wound_Healing/blob/b738ac006106ef4eca63186d2903d859cfe82e87/Results/Figure3(D1).png)
+### Prediction of scars based on cellular and molecular modeling
+![Image](https://github.com/youwillfindinfinity/Proliferative_Study_Burn_Wound_Healing/blob/b69f4a73718a71fbdd37d5eb56e98cbfad76f46d/Results/Figure3(D1).png)
 
 ## Abstract
 
