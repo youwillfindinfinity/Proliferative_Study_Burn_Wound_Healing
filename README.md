@@ -1,7 +1,7 @@
 # Understanding the Dynamics of the Proliferative Phase in Local Burn Wound Healing: A Computational Model
 
 **Authors:**  
-Roland V. Bumbuc<sup>1,2,3,4*</sup>†, H. Ibrahim Korkmaz<sup>1,2,5,6*</sup>, P.P.M. van Zuijlen<sup>1,5,6,8</sup>,Louis Vermeulen<sup>4,7,</sup>, Vivek M. Sheraton<sup> 3,4, *</sup>
+Roland V. Bumbuc<sup>1,2,3,4*</sup>†, H. Ibrahim Korkmaz<sup>1,2,5,6*</sup>,,Louis Vermeulen<sup>4,7,</sup>, Vivek M. Sheraton<sup> 3,4, *</sup> P.P.M. van Zuijlen<sup>1,5,6,8, *</sup>
 
 **Affiliations:**
 1. Department of Plastic, Reconstructive and Hand Surgery, Amsterdam Movement Sciences (AMS) Institute, Amsterdam UMC, Location VUmc,
@@ -15,16 +15,17 @@ Amsterdam, The Netherlands.
 7. Laboratory for Experimental Oncology and Radiobiology, ONCODE, Amsterdam UMC, Location AMC, Amsterdam, The Netherlands.
 8. Paediatric Surgical Centre, Emma Children’s Hospital, Amsterdam UMC, location AMC, Amsterdam, The Netherlands.
    
-Manuscript received October 30, 2023; last revised 30 October, 2023
+Manuscript received October 30, 2023; last revised 20 April, 2024
 
 **Correspondence(*)**
 
-Vivek M. Sheraton
+ P.P.M. van Zuijlen(ppmvazuijlen@me.com),
+ Vivek M. Sheraton(v.s.muniraj@uva.nl)
 
-Email: v.s.muniraj@uva.nl
+Email: 
 
 **Keywords:**  
-Local Burn wound healing, Proliferative phase, Computational modeling, Continuous model, ODE
+Burn wound healing, Computational modeling, Proliferative phase, Wound closure, Scar development, Burns, Healing prediction, Mechanistic mode
 
 This paper was submitted for the *7th International Workshop on Computational Methods for the Immune System Function (CMISF 2023)*.
 
@@ -32,7 +33,30 @@ This paper was submitted for the *7th International Workshop on Computational Me
 
 ## Abstract
 
-Understanding the dynamic processes that underlie burn wound healing is a complex endeavor that requires advanced computational approaches. The proliferative phase in burn wounds is critical for the closure of the burn wound. We present a novel model that uses a set of coupled ordinary differential equations that predict intricate interactions between different cell types, cytokines, growth factors, and proteins during the proliferative phase of wound healing after burn injury. We simulated the model for 30 weeks and were able to predict cell and molecular dynamics in this intricate phase of burn wound healing. We achieved biologically sensible results and were able to identify fibroblasts, myofibroblasts, and collagen types III and I as crucial parameters that drive the proliferative phase in burn wounds.
+**Background**: Understanding the complexities of burn wound healing is essential
+for developing better treatment strategies. The proliferative phase plays a vital
+role in wound closure and long-term tissue remodeling after burn injury.
+Purpose: This study aimed to develop a novel computational model using
+coupled ordinary differential equations to predict the interactions between cell
+types, cytokines, and key molecules during the proliferative phase of burn wound
+healing.
+**Methods**: A model was constructed using a system of equations that repre-
+sent the interactions between fibroblasts, myofibroblasts, mast cells, macrophages
+type II, cytokines (TGF-β1 and IL-8), and collagen types I and III. Model sim-
+ulations were run for 30 weeks and novel metrics were developed to evaluate
+Inflammation, Collagen deposition(2D) and Contraction.
+**Results**: The model successfully predicted realistic cell and molecular dynamics
+during the proliferative phase. The key parameters influencing wound remodeling
+after burn injury were identified as the initial counts of fibroblast / myofibrob-
+last and initial collagen type III/I concentrations. Novel cellular and molecular
+metrics were proposed to differentiate between normotrophic, hypertrophic, and
+keloid scar development based on these parameters and ongoing inflammatory
+activity.
+**Conclusion**: This study presents a novel computational model that effectively
+predicts cellular and molecular interactions and identifies crucial factors influenc-
+ing wound closure during the proliferative phase and scar formation during early
+remodeling phase of burn wound healing. The proposed metrics hold promise for
+early scar type prediction, aiding in clinical treatment decisions.
 
 ## Software Implementation
 
