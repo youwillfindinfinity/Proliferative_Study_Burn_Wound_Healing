@@ -1,7 +1,7 @@
 # Understanding the Dynamics of the Proliferative Phase in Local Burn Wound Healing: A Computational Model
 
 **Authors:**  
-Roland V. Bumbuc<sup>1,2,3,4*</sup>†, H. Ibrahim Korkmaz<sup>1,2,5,6*</sup>,,Louis Vermeulen<sup>4,7,</sup>, Vivek M. Sheraton<sup> 3,4, *</sup> P.P.M. van Zuijlen<sup>1,5,6,8, *</sup>
+Roland V. Bumbuc<sup>1,2,3,4</sup>†, H. Ibrahim Korkmaz<sup>1,2,5,6</sup>,Louis Vermeulen<sup>4,7,</sup>, Vivek M. Sheraton<sup> 3,4,*</sup> P.P.M. van Zuijlen<sup>1,5,6,8,*</sup>
 
 **Affiliations:**
 1. Department of Plastic, Reconstructive and Hand Surgery, Amsterdam Movement Sciences (AMS) Institute, Amsterdam UMC, Location VUmc,
@@ -17,7 +17,7 @@ Amsterdam, The Netherlands.
    
 Manuscript received October 30, 2023; last revised 20 April, 2024
 
-**Correspondence(*)**
+**Correspondence(*) **
 
  P.P.M. van Zuijlen(ppmvazuijlen@me.com),
  Vivek M. Sheraton(v.s.muniraj@uva.nl)
@@ -27,7 +27,7 @@ Email:
 **Keywords:**  
 Burn wound healing, Computational modeling, Proliferative phase, Wound closure, Scar development, Burns, Healing prediction, Mechanistic mode
 
-This paper was submitted for the *7th International Workshop on Computational Methods for the Immune System Function (CMISF 2023)*.
+This paper was submitted for the **7th International Workshop on Computational Methods for the Immune System Function (CMISF 2023)**.
 
 ![Image](https://github.com/youwillfindinfinity/Proliferative_Study_Burn_Wound_Healing/blob/b738ac006106ef4eca63186d2903d859cfe82e87/Results/Figure3(D1).png)
 
@@ -73,6 +73,6 @@ or by clicking on `Code` > `Download ZIP`.
 
 The figures and text are open source. The authors reserve the rights to the article content, which is currently submitted for publication in the *7th International Workshop on Computational Methods for the Immune System Function (CMISF 2023)* conference.
 
-10.1109/BIBM58861.2023.10385875
+http://10.1109/BIBM58861.2023.10385875
 
-This paper is getting extended and soon will be published at BMC Bioinformatics, link to follow.
+This paper is getting extended.
