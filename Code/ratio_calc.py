@@ -124,7 +124,7 @@ def fig_1a():
     plt.ylabel(r'Collagen ratio ($\frac{CI}{CIII}$)')
     plt.colorbar(label=r'Inflammation metric($\frac{I}{A_{MC}}-\frac{T}{A_{MII}}$)') 
     plt.legend()
-        
+    plt.ylim([0, 8])
 
     # Save and display the plot
     plt.savefig("ratio_calc_1.png", dpi=300)
@@ -439,3 +439,4 @@ def fig_4():
         # plt.title(f't-SNE Analysis - Scenario {scenario}')
         plt.savefig(f"{output_folder}/tsne_plot_scenario_{scenario}_custom_labels.png", dpi=300)
         plt.show()
+fig_1a()
