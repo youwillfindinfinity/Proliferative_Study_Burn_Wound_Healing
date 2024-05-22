@@ -1,7 +1,7 @@
 # Understanding the Dynamics of the Proliferative Phase in Local Burn Wound Healing: A Computational Model
 
 **Authors:**  
-Roland V. Bumbuc<sup>1,2,3,4</sup>†, H. Ibrahim Korkmaz<sup>1,2,5,6</sup>,Louis Vermeulen<sup>4,7,</sup>, Vivek M. Sheraton<sup> 3,4, * </sup> P.P.M. van Zuijlen<sup>1,5,6,8, * </sup>
+Roland V. Bumbuc<sup>1,2,3,4</sup>†*, H. Ibrahim Korkmaz<sup>1,2,5,6</sup>,Louis Vermeulen<sup>4,7,</sup>, Vivek M. Sheraton<sup> 3,4,  </sup> P.P.M. van Zuijlen<sup>1,5,6,8,  </sup>
 
 **Affiliations:**
 1. Department of Plastic, Reconstructive and Hand Surgery, Amsterdam Movement Sciences (AMS) Institute, Amsterdam UMC, Location VUmc,
@@ -19,9 +19,7 @@ Manuscript received October 30, 2023; last revised 20 April, 2024
 
 **Correspondence(*) **
 
- P.P.M. van Zuijlen(ppmvazuijlen@me.com),
-
- Vivek M. Sheraton(v.s.muniraj@uva.nl)
+Roland V. Bumbuc(r.v.bumbuc@amsterdamumc.nl)
 
 Email: 
 
