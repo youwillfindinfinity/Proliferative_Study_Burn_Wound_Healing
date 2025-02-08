@@ -60,4 +60,3 @@ The figures and text are open source. The authors reserve the rights to the arti
 
 http://10.1109/BIBM58861.2023.10385875
 
-This paper is getting extended.
